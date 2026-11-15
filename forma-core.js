@@ -5,7 +5,7 @@
     violet:["#8f7cff","#55dfd0"], blue:["#5b9dff","#69e1e8"], emerald:["#35c995","#b5e77b"],
     rose:["#ef83b5","#a58bff"], amber:["#f0b65e","#ff826f"], mono:["#d7dbea","#858da5"]
   };
-  const defaults = {palette:"violet",mode:"dark",accent:"#8f7cff",accent2:"#55dfd0",radius:18,contentWidth:1120,spacing:72,glow:22,font:"modern",buttons:"rounded",background:"aurora",motion:"smooth"};
+  const defaults = {palette:"violet",mode:"dark",accent:"#8f7cff",accent2:"#55dfd0",radius:18,contentWidth:1120,spacing:72,glow:22,font:"modern",buttons:"rounded",background:"aurora",motion:"smooth",columns:3,gap:18,bgIntensity:55,animationSpeed:320,cardStyle:"glass",buttonStyle:"gradient",inputStyle:"soft",navStyle:"floating"};
   let state=null, root=null, panel=null, trigger=null, style=null, storageKey=null, opts={}, listeners=[];
   const clamp=(n,min,max)=>Math.min(max,Math.max(min,Number(n)||0));
   const validHex=v=>/^#[0-9a-f]{6}$/i.test(v);
@@ -25,6 +25,9 @@
     root.style.setProperty("--forma-text",light?"#171c2a":"#f3f5fb");
     root.dataset.formaMode=s.mode; root.dataset.formaFont=s.font; root.dataset.formaButtons=s.buttons;
     root.dataset.formaBackground=s.background; root.dataset.formaMotion=s.motion;
+    root.dataset.formaCard=s.cardStyle;root.dataset.formaButton=s.buttonStyle;root.dataset.formaInput=s.inputStyle;root.dataset.formaNav=s.navStyle;
+    root.style.setProperty("--forma-grid-columns",s.columns);root.style.setProperty("--forma-grid-gap",s.gap+"px");
+    root.style.setProperty("--forma-bg-intensity",s.bgIntensity/100);root.style.setProperty("--forma-animation-speed",s.animationSpeed+"ms");
     if(panel) syncControls();
   }
   function getSettings(){return state?{...state}:null;}
@@ -36,6 +39,8 @@
     if(!validHex(next.accent2))next.accent2=state.accent2;
     next.radius=clamp(next.radius,0,40); next.contentWidth=clamp(next.contentWidth,680,1600);
     next.spacing=clamp(next.spacing,24,140); next.glow=clamp(next.glow,0,60);
+    next.columns=clamp(next.columns,1,6);next.gap=clamp(next.gap,4,48);next.bgIntensity=clamp(next.bgIntensity,0,100);next.animationSpeed=clamp(next.animationSpeed,80,1200);
+    ["cardStyle","buttonStyle","inputStyle","navStyle"].forEach(k=>{if(typeof next[k]!=="string")next[k]=defaults[k];});
     state=next;apply();persist();emit();
   }
   function el(tag,attrs={},html=""){const n=document.createElement(tag);Object.entries(attrs).forEach(([k,v])=>k==="class"?n.className=v:k==="text"?n.textContent=v:n.setAttribute(k,v));if(html)n.innerHTML=html;return n;}
@@ -94,6 +99,29 @@
     bg.input.addEventListener("change",()=>setSettings({background:bg.input.value}));panel.append(bg.wrap);
     const motion=selectControl("Движение","forma-motion",[["smooth","Плавное"],["snappy","Быстрое"],["off","Отключено"]],state.motion);
     motion.input.addEventListener("change",()=>setSettings({motion:motion.input.value}));panel.append(motion.wrap);
+    section("Component Studio");
+    const componentFields=[
+      ["Карточки","cardStyle",[["glass","Glass"],["solid","Solid"],["outline","Outline"],["flat","Flat"]]],
+      ["Кнопки","buttonStyle",[["gradient","Gradient"],["solid","Solid"],["outline","Outline"],["ghost","Ghost"]]],
+      ["Поля ввода","inputStyle",[["soft","Soft"],["underline","Underline"],["outline","Outline"]]],
+      ["Навигация","navStyle",[["floating","Floating"],["solid","Solid"],["minimal","Minimal"]]]
+    ];
+    componentFields.forEach(([label,key,items])=>{const c=selectControl(label,"forma-"+key,items,state[key]);c.input.addEventListener("change",()=>setSettings({[key]:c.input.value}));panel.append(c.wrap);});
+    section("Layout Builder");
+    [["Колонки сетки","columns",1,6],["Расстояние между блоками","gap",4,48]].forEach(([label,key,min,max])=>{const c=control(label,"forma-"+key,"range",state[key],min,max);c.input.addEventListener("input",()=>setSettings({[key]:Number(c.input.value)}));panel.append(c.wrap);});
+    panel.append(el("p",{class:"forma-hint",text:"Для своих сеток добавь класс forma-grid — колонки и интервалы будут управляться отсюда."}));
+    section("Background Studio");
+    const bgIntensity=control("Интенсивность фона","forma-bgIntensity","range",state.bgIntensity,0,100);bgIntensity.input.addEventListener("input",()=>setSettings({bgIntensity:Number(bgIntensity.input.value)}));panel.append(bgIntensity.wrap);
+    section("Animation Timeline");
+    const speed=control("Длительность переходов","forma-animationSpeed","range",state.animationSpeed,80,1200);speed.input.addEventListener("input",()=>setSettings({animationSpeed:Number(speed.input.value)}));panel.append(speed.wrap);
+    section("Theme Marketplace");
+    const marketplace=el("div",{class:"forma-actions"});
+    const publishTheme=el("button",{text:"Сохранить тему в библиотеку"});
+    const themeList=el("div",{class:"forma-theme-list"});
+    publishTheme.addEventListener("click",()=>{const name=prompt("Название темы:");if(!name)return;let items=[];try{items=JSON.parse(localStorage.getItem(storageKey+":market")||"[]");}catch(e){}items.push({name:name.slice(0,32),settings:{...state}});localStorage.setItem(storageKey+":market",JSON.stringify(items.slice(-12)));renderMarketplace();notify("Тема добавлена в библиотеку");});
+    marketplace.append(publishTheme);panel.append(marketplace,themeList);
+    function renderMarketplace(){themeList.replaceChildren();let items=[];try{items=JSON.parse(localStorage.getItem(storageKey+":market")||"[]");}catch(e){}items.forEach((item,index)=>{const row=el("div",{class:"forma-market-row"});const load=el("button",{text:item.name});load.addEventListener("click",()=>setSettings(item.settings));const remove=el("button",{text:"×","aria-label":"Удалить тему"});remove.addEventListener("click",()=>{items.splice(index,1);localStorage.setItem(storageKey+":market",JSON.stringify(items));renderMarketplace();});row.append(load,remove);themeList.append(row);});}
+    renderMarketplace();
     section("Сохранённые стили");
     const presets=el("div",{class:"forma-actions"});
     ["Signature","Minimal","Soft","Bold"].forEach(name=>{const b=el("button",{class:"forma-preset",text:name});b.addEventListener("click",()=>{const p={Signature:{radius:18,spacing:72,glow:22,background:"aurora",motion:"smooth"},Minimal:{radius:8,spacing:52,glow:0,background:"plain",motion:"snappy"},Soft:{radius:30,spacing:100,glow:38,background:"aurora",motion:"smooth"},Bold:{radius:12,spacing:60,glow:52,background:"grid",motion:"snappy"}}[name];setSettings(p);});presets.append(b);});panel.append(presets);
@@ -113,7 +141,7 @@
     document.addEventListener("keydown",e=>{if(e.key==="Escape")shut();});
     syncControls();
   }
-  function syncControls(){if(!panel)return;const map={mode:"forma-mode",accent:"forma-accent",accent2:"forma-accent2",radius:"forma-radius",contentWidth:"forma-contentWidth",spacing:"forma-spacing",glow:"forma-glow",font:"forma-font",buttons:"forma-buttons",background:"forma-background",motion:"forma-motion"};Object.entries(map).forEach(([k,id])=>{const n=panel.querySelector("#"+id);if(n&&document.activeElement!==n)n.value=state[k];});}
+  function syncControls(){if(!panel)return;const map={cardStyle:"forma-cardStyle",buttonStyle:"forma-buttonStyle",inputStyle:"forma-inputStyle",navStyle:"forma-navStyle",columns:"forma-columns",gap:"forma-gap",bgIntensity:"forma-bgIntensity",animationSpeed:"forma-animationSpeed",mode:"forma-mode",accent:"forma-accent",accent2:"forma-accent2",radius:"forma-radius",contentWidth:"forma-contentWidth",spacing:"forma-spacing",glow:"forma-glow",font:"forma-font",buttons:"forma-buttons",background:"forma-background",motion:"forma-motion"};Object.entries(map).forEach(([k,id])=>{const n=panel.querySelector("#"+id);if(n&&document.activeElement!==n)n.value=state[k];});}
   function notify(message){let n=document.querySelector("[data-forma-toast]");if(!n){n=el("div",{"data-forma-toast":"",text:message});Object.assign(n.style,{position:"fixed",left:"50%",bottom:"22px",transform:"translateX(-50%)",zIndex:"2147483003",background:"#151b2a",color:"white",padding:"10px 15px",borderRadius:"12px",boxShadow:"0 5px 25px #0005"});document.body.append(n);}n.textContent=message;clearTimeout(n._timer);n._timer=setTimeout(()=>n.remove(),2200);}
   function init(options={}) {
     if(state)destroy();
