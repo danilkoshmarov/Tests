@@ -45,9 +45,9 @@
     const textEdit=el("textarea",{placeholder:"Текст выбранного элемента"});textEdit.addEventListener("change",()=>{if(!selected)return;remember();selected.textContent=textEdit.value;});
     panel.append(field("Текст элемента",textEdit));
     const color=input("color","#8f7cff");color.addEventListener("input",()=>{if(selected)selected.style.color=color.value;});
-    color.addEventListener("change",remember);panel.append(field("Цвет текста",color));
-    const bg=input("color","#111827");bg.addEventListener("input",()=>{if(selected)selected.style.backgroundColor=bg.value;});bg.addEventListener("change",remember);panel.append(field("Цвет фона элемента",bg));
-    const radius=input("range","18");radius.min=0;radius.max=60;radius.addEventListener("input",()=>{if(selected)selected.style.borderRadius=radius.value+"px";});radius.addEventListener("change",remember);panel.append(field("Скругление",radius));
+    color.addEventListener("pointerdown",remember);panel.append(field("Цвет текста",color));
+    const bg=input("color","#111827");bg.addEventListener("input",()=>{if(selected)selected.style.backgroundColor=bg.value;});bg.addEventListener("pointerdown",remember);panel.append(field("Цвет фона элемента",bg));
+    const radius=input("range","18");radius.min=0;radius.max=60;radius.addEventListener("input",()=>{if(selected)selected.style.borderRadius=radius.value+"px";});radius.addEventListener("pointerdown",remember);panel.append(field("Скругление",radius));
     panel.append(el("div",{class:"f4-title"},"Section Builder"));
     const sections=el("div",{class:"f4-row"});
     [["Hero","hero"],["Features","features"],["Pricing","pricing"],["FAQ","faq"],["Отзывы","testimonials"]].forEach(([label,type])=>sections.append(button("+ "+label,()=>addSection(type))));
