@@ -119,8 +119,9 @@
     if(state)destroy();
     opts={panel:true,...options};root=opts.target instanceof Element?opts.target:document.documentElement;
     storageKey=opts.storageKey||("forma:v2:"+location.host+location.pathname);
-    try{state={...defaults,...JSON.parse(localStorage.getItem(storageKey)||"{}"),...(opts.defaultSettings||{})};}catch(e){state={...defaults,...(opts.defaultSettings||{})};}
-    const c=palettes[state.palette];if(c&&(!opts.defaultSettings||!opts.defaultSettings.accent)){state.accent=state.accent||c[0];state.accent2=state.accent2||c[1];}
+    let stored={};try{stored=JSON.parse(localStorage.getItem(storageKey)||"{}")||{};}catch(e){}
+    state={...defaults,...stored,...(opts.defaultSettings||{})};
+    const c=palettes[state.palette];if(c&&!stored.accent&&!opts.defaultSettings?.accent){state.accent=c[0];state.accent2=c[1];}
     apply();createPanel();return api;
   }
   function reset(){setSettings({...defaults,...opts.defaultSettings});}
