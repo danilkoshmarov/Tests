@@ -1,10 +1,10 @@
-# FORMA Design Engine 2.0
+# FORMA Design Engine 3.0
 
-Portable visual customization layer for independent websites. No framework, build step, account, or server required.
+Portable, framework-free design customization engine.
 
 ## Install
 
-Copy `forma-core.js` and `forma-core.css` into your project and include:
+Copy `forma-core.js` and `forma-core.css` into your project:
 
 ```html
 <link rel="stylesheet" href="./forma-core.css">
@@ -13,36 +13,36 @@ Copy `forma-core.js` and `forma-core.css` into your project and include:
   FORMA.init({
     panel: true,
     storageKey: "my-project-design",
-    defaultSettings: { palette: "violet", mode: "dark", radius: 18 },
-    onChange(settings) { console.log("Design changed", settings); }
+    defaultSettings: { mode: "dark", radius: 18 },
+    onChange(settings) { console.log(settings); }
   });
 </script>
 ```
 
-If `storageKey` is omitted, settings are isolated by hostname + pathname.
-
 ## API
 
-- `FORMA.init(options)` — initialize engine and optional generated settings drawer.
-- `FORMA.getSettings()` — return a copy of current settings.
-- `FORMA.setSettings(partial)` — update settings, persist, and emit `forma:change`.
+- `FORMA.init(options)` — initialize engine and generated design panel.
+- `FORMA.getSettings()` — get a copy of current settings.
+- `FORMA.setSettings(partial)` — update, persist and broadcast settings.
 - `FORMA.reset()` — restore defaults.
-- `FORMA.destroy()` — remove injected UI and style layer.
+- `FORMA.destroy()` — remove injected panel and style layer.
 
-## Options
+Options: `panel` (default true), `storageKey`, `target`, `defaultSettings`, `onChange`.
+Without a custom key, preferences are isolated by hostname and pathname.
 
-- `panel` (default true): create the floating settings button and drawer.
-- `storageKey`: custom localStorage key.
-- `target`: element or selector to mount the floating trigger.
-- `defaultSettings`: override initial values.
-- `onChange(settings)`: callback after changes.
+## FORMA 3.0 studios
 
-## Design tokens
+- **Component Studio:** card recipes (glass/solid/outline/flat), button recipes (gradient/solid/outline/ghost), input and navigation styles.
+- **Layout Builder:** content width, section spacing, grid columns and grid gap.
+- **Background Studio:** aurora, minimal and grid backgrounds with intensity control.
+- **Animation Timeline:** smooth/snappy/off motion and transition duration.
+- **Theme Marketplace:** save named local themes, load them, delete them.
+- **Theme portability:** JSON import/export.
 
-`--forma-accent`, `--forma-accent-2`, `--forma-radius`, `--forma-content-width`, `--forma-section-space`, `--forma-glow`, `--forma-bg`, `--forma-surface`, `--forma-text`.
+## HTML helper classes
 
-Opt-in helpers: `.forma-container`, `.forma-section`, `.forma-card`, `.forma-gradient`.
+`.forma-container`, `.forma-section`, `.forma-grid`, `.forma-card`, `.forma-gradient`.
 
 ## Demo
 
-Open [engine-test.html](./engine-test.html) to see the engine running on a page that has no FORMA Playground markup.
+Open [engine-test.html](./engine-test.html). It intentionally contains no Playground-specific markup.
