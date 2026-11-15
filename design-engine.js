@@ -33,6 +33,13 @@ applyPalette(palettes.find(p=>p.name===selected)||palettes[0]);
 
 const settingsPanel=document.getElementById('settingsPanel');
 document.getElementById('settingsOpen').addEventListener('click',e=>{e.preventDefault();settingsPanel.scrollIntoView({behavior:'smooth',block:'start'});});
+document.getElementById('settingsDone').addEventListener('click',exportCSSProfile);
+const brightnessControl=document.getElementById('brightnessControl'),motionSpeedControl=document.getElementById('motionSpeedControl');
+function applyBrightness(v){const value=Number(v);root.style.setProperty('--forma-brightness',value/100);document.getElementById('brightnessValue').textContent=value+'%';localStorage.setItem('forma-brightness',String(value));}
+function applyMotionSpeed(v){const value=Number(v);root.style.setProperty('--forma-motion-speed',value/100);document.getElementById('motionSpeedValue').textContent=value+'%';localStorage.setItem('forma-motion-speed',String(value));let style=document.getElementById('forma-motion-speed-style');if(!style){style=document.createElement('style');style.id='forma-motion-speed-style';document.head.append(style)}const duration=(.25*100/value).toFixed(3)+'s',long=(8*100/value).toFixed(3)+'s';style.textContent='.btn,.icon-btn,.palette,.feature,.panel,.motion-ball,.reveal{transition-duration:'+duration+'!important}.orb,.glass-card,.mini-bars i,.dot,.aurora-layer:before,.aurora-layer:after{animation-duration:'+long+'!important}';}
+brightnessControl.value=localStorage.getItem('forma-brightness')||100;motionSpeedControl.value=localStorage.getItem('forma-motion-speed')||100;applyBrightness(brightnessControl.value);applyMotionSpeed(motionSpeedControl.value);
+brightnessControl.addEventListener('input',e=>applyBrightness(e.target.value));motionSpeedControl.addEventListener('input',e=>applyMotionSpeed(e.target.value));
+
 const settingDefaults={radius:20,blur:24,glow:22,cursor:true,motion:true,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false,tilt:false,magnetic:false,aurora:false,particles:false};
 const stylePresets={
  signature:{radius:20,blur:24,glow:22,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false},
@@ -133,26 +140,26 @@ window.addEventListener('resize',()=>{if(designSettings.particles)setupParticles
 function exportCSSProfile(){
  const p=palettes.find(x=>x.name===selected)||palettes[0],s=designSettings;
  const bg=light?'#f3f5fb':p.bg,surface=light?'#ffffff':p.surface,surface2=light?'#e9edf7':p.surface2;
- const cssText=\`:root{color-scheme:\${light?'light':'dark'};--bg:\${bg};--surface:\${surface};--surface2:\${surface2};--text:\${light?'#171b29':'#f4f6ff'};--muted:\${light?'#667087':'#929bb2'};--line:\${light?'rgba(25,35,60,.12)':'rgba(255,255,255,.09)'};--a:\${p.a};--b:\${p.b};--glow:\${p.glow};--grad:linear-gradient(125deg,\${p.a},\${p.b});--ui-radius:\${s.radius}px;--glass-blur:\${s.blur}px;--section-space:\${s.density}px;--forma-motion-speed:\${Number(localStorage.getItem('forma-motion-speed')||100)}}
-body{background:radial-gradient(ellipse at 12% 0%,var(--glow),transparent 34%),var(--bg);color:var(--text);font-family:\${s.font==='editorial'?'Georgia,serif':s.font==='geometric'?'Manrope,Arial,sans-serif':'inherit'};transition:background .5s,color .35s}
+ const cssText=`:root{color-scheme:${light?'light':'dark'};--bg:${bg};--surface:${surface};--surface2:${surface2};--text:${light?'#171b29':'#f4f6ff'};--muted:${light?'#667087':'#929bb2'};--line:${light?'rgba(25,35,60,.12)':'rgba(255,255,255,.09)'};--a:${p.a};--b:${p.b};--glow:${p.glow};--grad:linear-gradient(125deg,${p.a},${p.b});--ui-radius:${s.radius}px;--glass-blur:${s.blur}px;--section-space:${s.density}px;--forma-motion-speed:${Number(localStorage.getItem('forma-motion-speed')||100)}}
+body{background:radial-gradient(ellipse at 12% 0%,var(--glow),transparent 34%),var(--bg);color:var(--text);font-family:${s.font==='editorial'?'Georgia,serif':s.font==='geometric'?'Manrope,Arial,sans-serif':'inherit'};transition:background .5s,color .35s}
 button,.btn,.card,.panel,.feature,article,input,textarea,select{border-radius:var(--ui-radius)}
 button,.btn,a,input,textarea,select{accent-color:var(--a)}
 .btn-primary,button.primary{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 8px 28px var(--glow)}
-.card,.panel,.feature,article{background:var(--surface);border:1px solid var(--line);box-shadow:\${s.shadow?'0 18px 55px rgba(0,0,0,.16)':'none'}}
+.card,.panel,.feature,article{background:var(--surface);border:1px solid var(--line);box-shadow:${s.shadow?'0 18px 55px rgba(0,0,0,.16)':'none'}}
 input:focus,textarea:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--a);outline-offset:3px}
 h1,h2,h3{letter-spacing:-.035em}
-\${s.button==='pill'?'button,.btn{border-radius:999px!important}':s.button==='sharp'?'button,.btn{border-radius:6px!important}':''}
-\${s.grid?'body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.1;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:42px 42px}':''}
-\${s.animation==='soft'? '*,*:before,*:after{transition-duration:.55s!important}':s.animation==='snappy'?'*,*:before,*:after{transition-duration:.12s!important}':s.animation==='cinematic'?'*,*:before,*:after{transition-duration:.8s!important}':''}
-\${s.motion?'':'*,*:before,*:after{animation:none!important;transition:none!important}'}
-\${s.font==='editorial'?'body{font-family:Georgia,serif}':s.font==='geometric'?'body{font-family:Manrope,Arial,sans-serif}':''}
-\`;
+${s.button==='pill'?'button,.btn{border-radius:999px!important}':s.button==='sharp'?'button,.btn{border-radius:6px!important}':''}
+${s.grid?'body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.1;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:42px 42px}':''}
+${s.animation==='soft'? '*,*:before,*:after{transition-duration:.55s!important}':s.animation==='snappy'?'*,*:before,*:after{transition-duration:.12s!important}':s.animation==='cinematic'?'*,*:before,*:after{transition-duration:.8s!important}':''}
+${s.motion?'':'*,*:before,*:after{animation:none!important;transition:none!important}'}
+${s.font==='editorial'?'body{font-family:Georgia,serif}':s.font==='geometric'?'body{font-family:Manrope,Arial,sans-serif}':''}
+`;
  const blob=new Blob([cssText],{type:'text/css'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='forma-theme.css';a.click();URL.revokeObjectURL(url);toast('CSS-тема экспортирована — подключи её через link');
 }
 
 function exportProfile(){const blob=new Blob([JSON.stringify({format:'FORMA_THEME',version:2,settings:designSettings,palette:selected,mode:light?'light':'dark',motionSpeed:Number(localStorage.getItem('forma-motion-speed')||100),brightness:Number(localStorage.getItem('forma-brightness')||100)},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='forma-design-profile.json';a.click();URL.revokeObjectURL(a.href);toast('Профиль экспортирован');}
 document.getElementById('exportSettings').addEventListener('click',exportProfile);
 document.getElementById('importSettings').addEventListener('click',()=>document.getElementById('importSettingsFile').click());
-document.getElementById('importSettingsFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text()),incoming=data.settings||data;if(!incoming||typeof incoming!=='object')throw new Error();designSettings={...settingDefaults,...incoming};if(data.palette&&palettes.some(p=>p.name===data.palette))applyPalette(palettes.find(p=>p.name===data.palette));window.activeDesignPreset=null;applyDesignSettings();saveSettings();setupTilt();setupMagnetic();setupParticles();toast('Профиль импортирован');}catch{toast('Не удалось прочитать профиль JSON')}e.target.value='';});
+document.getElementById('importSettingsFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text()),incoming=data.settings||data;if(!incoming||typeof incoming!=='object')throw new Error();designSettings={...settingDefaults,...incoming};if(data.palette&&palettes.some(p=>p.name===data.palette))applyPalette(palettes.find(p=>p.name===data.palette));if(data.mode){light=data.mode==='light';localStorage.setItem('forma-light-mode',String(light));applyPalette(palettes.find(p=>p.name===selected)||palettes[0]);document.getElementById('modeBtn').textContent=light?'☾':'☼'}if(typeof data.brightness==='number'){brightnessControl.value=data.brightness;applyBrightness(data.brightness)}if(typeof data.motionSpeed==='number'){motionSpeedControl.value=data.motionSpeed;applyMotionSpeed(data.motionSpeed)}window.activeDesignPreset=null;applyDesignSettings();saveSettings();setupTilt();setupMagnetic();setupParticles();toast('Профиль импортирован');}catch{toast('Не удалось прочитать профиль JSON')}e.target.value='';});
 
 applyDesignSettings();setupTilt();setupMagnetic();setupParticles();
