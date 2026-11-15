@@ -97,3 +97,20 @@ body.forma-font-geometric{font-family:Manrope,Arial,sans-serif}
 body.forma-buttons-pill button,body.forma-buttons-pill .btn{border-radius:999px!important}
 body.forma-buttons-sharp button,body.forma-buttons-sharp .btn{border-radius:6px!important}
 @media(max-width:560px){.forma-settings-trigger{right:14px;bottom:14px}.forma-settings-panel{padding:21px}}
+
+
+/* INLINE DESIGN WORKSPACE — no drawer, no overlay, controls live on the page */
+.settings-panel-inline{position:relative!important;inset:auto!important;width:min(1180px,calc(100% - 48px))!important;height:auto!important;max-height:none!important;overflow:visible!important;margin:0 auto!important;padding:72px 0!important;background:transparent!important;border:0!important;box-shadow:none!important;transform:none!important;transition:none!important;color:var(--text)!important}
+.settings-panel-inline .settings-head{display:none}
+.settings-panel-inline .settings-intro{max-width:720px;font-size:14px;margin:0 0 26px}
+.settings-panel-inline .setting{padding:20px 0}
+.settings-panel-inline .setting-top label{font-size:14px}
+.settings-panel-inline .settings-divider{padding-top:30px;font-size:11px}
+.settings-panel-inline .settings-actions{margin-top:28px;flex-wrap:wrap}
+.settings-panel-inline .settings-actions .btn{min-width:190px}
+.settings-panel-inline .settings-export-row{max-width:480px}
+.settings-panel-inline .setting-preset-grid{max-width:620px}
+.settings-panel-inline .settings-select{max-width:100%}
+.settings-panel-inline .setting input[type=range]{max-width:100%}
+.settings-panel-inline .section-head{margin-bottom:20px}
+@media(max-width:560px){.settings-panel-inline{width:calc(100% - 30px)!important;padding:48px 0!important}.settings-panel-inline .settings-actions .btn{width:100%}}
