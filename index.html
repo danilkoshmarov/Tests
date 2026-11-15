@@ -65,10 +65,23 @@ body.motion-cinematic .feature,body.motion-cinematic .palette,body.motion-cinema
 .settings-divider{font:700 10px var(--font-ui);letter-spacing:.16em;color:var(--a);text-transform:uppercase;padding:20px 0 4px}
 @media(max-width:560px){.shell{width:min(100% - 30px,var(--content-width))}}
 
+
+/* ADVANCED MOTION & ATMOSPHERE */
+.aurora-layer{position:fixed;inset:-20%;z-index:-1;pointer-events:none;opacity:0;filter:blur(70px);transition:opacity .5s}
+body.aurora-on .aurora-layer{opacity:.22}
+.aurora-layer:before,.aurora-layer:after{content:"";position:absolute;width:55vw;height:55vw;border-radius:50%;background:radial-gradient(circle,var(--a),transparent 68%);animation:auroraDrift 18s ease-in-out infinite alternate}
+.aurora-layer:after{right:5%;bottom:0;background:radial-gradient(circle,var(--b),transparent 68%);animation-duration:23s;animation-direction:alternate-reverse}
+@keyframes auroraDrift{from{transform:translate3d(-5%,0,0) scale(.85)}to{transform:translate3d(18%,12%,0) scale(1.18)}}
+#particleCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.55}
+.tilt-enabled .panel,.tilt-enabled .feature,.tilt-enabled .glass-card{transform-style:preserve-3d;transition:transform .18s ease,border-color .3s,box-shadow .3s}
+.magnetic-enabled .btn,.magnetic-enabled .icon-btn{will-change:transform}
+.settings-export-row{display:flex;gap:8px;margin-top:12px}.settings-export-row .btn{flex:1;font-size:11px;padding:10px 8px}
+@media(prefers-reduced-motion:reduce){.aurora-layer:before,.aurora-layer:after{animation:none!important}.tilt-enabled .panel,.tilt-enabled .feature,.tilt-enabled .glass-card{transform:none!important}}
+
 </style>
 </head>
 <body>
-<div class="cursor-glow" id="cursorGlow"></div>
+<div class="cursor-glow" id="cursorGlow"></div><div class="aurora-layer" aria-hidden="true"></div>
 <header class="shell topbar"><a class="brand" href="#"><span class="brandmark"></span>FORMA<span style="color:var(--a)">.</span></a><nav class="nav"><a href="#palettes">Палитры</a><a href="#interactions">Интерактив</a><a href="#motion">Анимации</a></nav><div class="top-actions"><button class="btn settings-trigger" id="settingsOpen" aria-label="Открыть настройки">⚙ <span class="settings-label">Настроить</span></button><button class="icon-btn" id="modeBtn" aria-label="Переключить режим">☼</button><a class="btn btn-primary" href="#palettes">Исследовать ↗</a></div></header>
 <main>
 <section class="shell hero"><div><div class="eyebrow"><span class="dot"></span> DIGITAL DESIGN PLAYGROUND</div><h1>Цвет — это<br><span class="gradient-text">настроение.</span></h1><p class="hero-copy">Экспериментальная площадка для визуальных идей. Выбирай палитры, изучай сочетания, взаимодействуй с элементами и наблюдай, как интерфейс оживает.</p><div class="hero-buttons"><a class="btn btn-primary" href="#palettes">Выбрать палитру <span>↗</span></a><a class="btn btn-outline" href="#interactions">Посмотреть эффекты</a></div><div class="hero-note"><div><strong>10</strong> авторских палитр</div><div><strong>∞</strong> сочетаний</div><div><strong>Live</strong> preview</div></div></div>
@@ -97,6 +110,15 @@ body.motion-cinematic .feature,body.motion-cinematic .palette,body.motion-cinema
  <div class="setting"><div class="setting-top"><label for="animationControl">Характер анимаций</label></div><select class="settings-select" id="animationControl"><option value="balanced">Balanced — сбалансированный</option><option value="soft">Soft — плавный</option><option value="snappy">Snappy — быстрый</option><option value="cinematic">Cinematic — медленный</option></select></div>
  <div class="setting"><div class="setting-top"><label>Глубокие тени</label><button class="setting-switch on" id="shadowSwitch" aria-label="Переключить тени"><span></span></button></div><div class="setting-hint">Добавляет объём карточкам и панелям.</div></div>
  <div class="setting"><div class="setting-top"><label>Фоновая сетка</label><button class="setting-switch" id="gridSwitch" aria-label="Переключить сетку"><span></span></button></div><div class="setting-hint">Тонкая техническая сетка на фоне.</div></div>
+
+ <div class="settings-divider">Продвинутые эффекты</div>
+ <div class="setting"><div class="setting-top"><label>3D-наклон карточек</label><button class="setting-switch" id="tiltSwitch" aria-label="Переключить 3D наклон"><span></span></button></div><div class="setting-hint">Карточки реагируют на положение указателя.</div></div>
+ <div class="setting"><div class="setting-top"><label>Magnetic buttons</label><button class="setting-switch" id="magneticSwitch" aria-label="Переключить магнитные кнопки"><span></span></button></div><div class="setting-hint">Кнопки слегка притягиваются к курсору.</div></div>
+ <div class="setting"><div class="setting-top"><label>Aurora background</label><button class="setting-switch" id="auroraSwitch" aria-label="Переключить aurora фон"><span></span></button></div><div class="setting-hint">Живые цветовые переливы на заднем плане.</div></div>
+ <div class="setting"><div class="setting-top"><label>Particle field</label><button class="setting-switch" id="particlesSwitch" aria-label="Переключить частицы"><span></span></button></div><div class="setting-hint">Лёгкая интерактивная система частиц.</div></div>
+ <div class="settings-divider">Перенос настроек</div>
+ <div class="setting"><div class="setting-hint">Сохрани свой профиль и перенеси его на другой сайт с FORMA Design Engine.</div><div class="settings-export-row"><button class="btn btn-outline" id="exportSettings">Экспорт JSON</button><button class="btn btn-outline" id="importSettings">Импорт JSON</button><input id="importSettingsFile" type="file" accept="application/json,.json" hidden></div></div>
+
  <div class="settings-actions"><button class="btn btn-outline" id="settingsReset">Сбросить</button><button class="btn btn-primary" id="settingsDone">Готово ✓</button></div>
 </aside>
 <div class="toast" id="toast" role="status"></div>
@@ -142,7 +164,7 @@ document.getElementById('settingsClose').addEventListener('click',closeSettings)
 document.getElementById('settingsDone').addEventListener('click',closeSettings);
 settingsOverlay.addEventListener('click',closeSettings);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSettings()});
-const settingDefaults={radius:20,blur:24,glow:22,cursor:true,motion:true,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false};
+const settingDefaults={radius:20,blur:24,glow:22,cursor:true,motion:true,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false,tilt:false,magnetic:false,aurora:false,particles:false};
 const stylePresets={
  signature:{radius:20,blur:24,glow:22,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false},
  minimal:{radius:12,blur:8,glow:10,font:'geometric',button:'sharp',density:58,animation:'snappy',shadow:false,grid:false},
@@ -169,7 +191,7 @@ function applyDesignSettings(){
  document.getElementById('densityControl').value=designSettings.density;
  document.getElementById('densityValue').textContent=designSettings.density+' px';
  document.getElementById('animationControl').value=designSettings.animation;
- setSwitch('shadowSwitch',designSettings.shadow);setSwitch('gridSwitch',designSettings.grid);
+ setSwitch('shadowSwitch',designSettings.shadow);setSwitch('gridSwitch',designSettings.grid);\n setSwitch('tiltSwitch',designSettings.tilt);setSwitch('magneticSwitch',designSettings.magnetic);setSwitch('auroraSwitch',designSettings.aurora);setSwitch('particlesSwitch',designSettings.particles);\n document.body.classList.toggle('tilt-enabled',designSettings.tilt);document.body.classList.toggle('magnetic-enabled',designSettings.magnetic);document.body.classList.toggle('aurora-on',designSettings.aurora);
  document.querySelectorAll('[data-preset]').forEach(b=>b.classList.toggle('active',b.dataset.preset===window.activeDesignPreset));
  const p=palettes.find(x=>x.name===selected)||palettes[0];
  const alpha=(designSettings.glow/100).toFixed(2);
@@ -195,5 +217,51 @@ document.getElementById('densityControl').addEventListener('input',e=>{designSet
 ['shadow','grid'].forEach(key=>document.getElementById(key+'Switch').addEventListener('click',()=>{designSettings[key]=!designSettings[key];window.activeDesignPreset=null;applyDesignSettings();saveSettings()}));
 document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{window.activeDesignPreset=b.dataset.preset;designSettings={...designSettings,...stylePresets[b.dataset.preset]};applyDesignSettings();saveSettings();toast('Стиль '+b.textContent.trim()+' применён')}));
 
-applyDesignSettings();
+
+/* Advanced effects: only run on pointer devices and respect reduced-motion. */
+const motionAllowed=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+function bindEffectSwitch(id,key,after){document.getElementById(id).addEventListener('click',()=>{designSettings[key]=!designSettings[key];window.activeDesignPreset=null;applyDesignSettings();saveSettings();if(after)after();});}
+bindEffectSwitch('tiltSwitch','tilt',setupTilt);
+bindEffectSwitch('magneticSwitch','magnetic',setupMagnetic);
+bindEffectSwitch('auroraSwitch','aurora');
+bindEffectSwitch('particlesSwitch','particles',setupParticles);
+let tiltBound=false;
+function setupTilt(){
+ if(!designSettings.tilt||!motionAllowed||!finePointer||tiltBound)return;
+ tiltBound=true;
+ document.querySelectorAll('.panel,.feature,.glass-card').forEach(card=>{
+  card.addEventListener('pointermove',e=>{if(!designSettings.tilt)return;const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${-y*5}deg) rotateY(${x*6}deg) translateY(-2px)`;});
+  card.addEventListener('pointerleave',()=>card.style.transform='');
+ });
+}
+function setupMagnetic(){
+ if(!designSettings.magnetic||!motionAllowed||!finePointer)return;
+ document.querySelectorAll('.btn,.icon-btn').forEach(btn=>{
+  if(btn.dataset.magneticBound)return;btn.dataset.magneticBound='1';
+  btn.addEventListener('pointermove',e=>{if(!designSettings.magnetic)return;const r=btn.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);btn.style.transform=`translate3d(${dx*.10}px,${dy*.14}px,0)`;});
+  btn.addEventListener('pointerleave',()=>btn.style.transform='');
+ });
+}
+let particleCanvas,particleCtx,particleFrame=0,particlePoints=[];
+function setupParticles(){
+ if(!designSettings.particles){if(particleCanvas)particleCanvas.remove();particleCanvas=null;cancelAnimationFrame(particleFrame);return}
+ if(!motionAllowed||document.hidden)return;
+ if(!particleCanvas){particleCanvas=document.createElement('canvas');particleCanvas.id='particleCanvas';document.body.prepend(particleCanvas);particleCtx=particleCanvas.getContext('2d');}
+ const dpr=Math.min(window.devicePixelRatio||1,1.5),w=innerWidth,h=innerHeight;
+ particleCanvas.width=Math.round(w*dpr);particleCanvas.height=Math.round(h*dpr);particleCtx.setTransform(dpr,0,0,dpr,0,0);
+ particlePoints=Array.from({length:Math.min(46,Math.floor(w/28))},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:Math.random()*1.5+.5}));
+ cancelAnimationFrame(particleFrame);
+ const draw=()=>{if(!designSettings.particles||document.hidden)return;particleCtx.clearRect(0,0,w,h);particleCtx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--a').trim()||'#9b83ff';
+  particlePoints.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;particleCtx.globalAlpha=.28;particleCtx.beginPath();particleCtx.arc(p.x,p.y,p.r,0,Math.PI*2);particleCtx.fill();});particleFrame=requestAnimationFrame(draw);};
+ particleFrame=requestAnimationFrame(draw);
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(particleFrame);else if(designSettings.particles)setupParticles()});
+window.addEventListener('resize',()=>{if(designSettings.particles)setupParticles()},{passive:true});
+function exportProfile(){const blob=new Blob([JSON.stringify({version:1,settings:designSettings,palette:selected},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='forma-design-profile.json';a.click();URL.revokeObjectURL(a.href);toast('Профиль экспортирован');}
+document.getElementById('exportSettings').addEventListener('click',exportProfile);
+document.getElementById('importSettings').addEventListener('click',()=>document.getElementById('importSettingsFile').click());
+document.getElementById('importSettingsFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text()),incoming=data.settings||data;if(!incoming||typeof incoming!=='object')throw new Error();designSettings={...settingDefaults,...incoming};if(data.palette&&palettes.some(p=>p.name===data.palette))applyPalette(palettes.find(p=>p.name===data.palette));window.activeDesignPreset=null;applyDesignSettings();saveSettings();setupTilt();setupMagnetic();setupParticles();toast('Профиль импортирован');}catch{toast('Не удалось прочитать профиль JSON')}e.target.value='';});
+
+applyDesignSettings();setupTilt();setupMagnetic();setupParticles();
 </script></body></html>
