@@ -30,7 +30,7 @@ Copy `forma-core.js` and `forma-core.css` into your project:
 Options: `panel` (default true), `storageKey`, `target`, `defaultSettings`, `onChange`.
 Without a custom key, preferences are isolated by hostname and pathname.
 
-## FORMA 3.0 studios
+## FORMA 3.0 studios (core)
 
 - **Component Studio:** card recipes (glass/solid/outline/flat), button recipes (gradient/solid/outline/ghost), input and navigation styles.
 - **Layout Builder:** content width, section spacing, grid columns and grid gap.
