@@ -191,7 +191,9 @@ function applyDesignSettings(){
  document.getElementById('densityControl').value=designSettings.density;
  document.getElementById('densityValue').textContent=designSettings.density+' px';
  document.getElementById('animationControl').value=designSettings.animation;
- setSwitch('shadowSwitch',designSettings.shadow);setSwitch('gridSwitch',designSettings.grid);\n setSwitch('tiltSwitch',designSettings.tilt);setSwitch('magneticSwitch',designSettings.magnetic);setSwitch('auroraSwitch',designSettings.aurora);setSwitch('particlesSwitch',designSettings.particles);\n document.body.classList.toggle('tilt-enabled',designSettings.tilt);document.body.classList.toggle('magnetic-enabled',designSettings.magnetic);document.body.classList.toggle('aurora-on',designSettings.aurora);
+ setSwitch('shadowSwitch',designSettings.shadow);setSwitch('gridSwitch',designSettings.grid);
+ setSwitch('tiltSwitch',designSettings.tilt);setSwitch('magneticSwitch',designSettings.magnetic);setSwitch('auroraSwitch',designSettings.aurora);setSwitch('particlesSwitch',designSettings.particles);
+ document.body.classList.toggle('tilt-enabled',designSettings.tilt);document.body.classList.toggle('magnetic-enabled',designSettings.magnetic);document.body.classList.toggle('aurora-on',designSettings.aurora);
  document.querySelectorAll('[data-preset]').forEach(b=>b.classList.toggle('active',b.dataset.preset===window.activeDesignPreset));
  const p=palettes.find(x=>x.name===selected)||palettes[0];
  const alpha=(designSettings.glow/100).toFixed(2);
