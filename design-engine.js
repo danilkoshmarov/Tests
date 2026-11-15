@@ -10,18 +10,18 @@ const palettes=[
 {name:'Golden Hour',sub:'rich · refined',a:'#e9bd69',b:'#f18b70',bg:'#15110b',surface:'#241d12',surface2:'#342918',glow:'rgba(233,189,105,.2)'},
 {name:'Mono Chrome',sub:'minimal · timeless',a:'#d4d9e8',b:'#858da5',bg:'#0c0e13',surface:'#171a22',surface2:'#222632',glow:'rgba(190,200,225,.17)'}
 ];
-let selected=localStorage.getItem('forma-palette')||'Electric Violet';let light=false;
+let selected=localStorage.getItem('forma-palette')||'Electric Violet';let light=localStorage.getItem('forma-light-mode')==='true';
 const root=document.documentElement;
 function applyPalette(p){selected=p.name;root.style.setProperty('--a',p.a);root.style.setProperty('--b',p.b);root.style.setProperty('--bg',light?'#f3f5fb':p.bg);root.style.setProperty('--surface',light?'#ffffff':p.surface);root.style.setProperty('--surface2',light?'#e9edf7':p.surface2);root.style.setProperty('--glow',p.glow);root.style.setProperty('--grad',`linear-gradient(125deg,${p.a},${p.b})`);document.body.style.color=light?'#171b29':'var(--text)';document.body.style.setProperty('--text',light?'#171b29':'#f4f6ff');document.body.style.setProperty('--muted',light?'#667087':'#929bb2');document.body.style.setProperty('--line',light?'rgba(25,35,60,.12)':'rgba(255,255,255,.09)');localStorage.setItem('forma-palette',p.name);renderPalettes()}
 function renderPalettes(){document.getElementById('paletteGrid').innerHTML=palettes.map(p=>`<button class="palette ${p.name===selected?'active':''}" data-palette="${p.name}"><span class="check">✓</span><span class="swatches"><i style="background:${p.bg}"></i><i style="background:${p.surface}"></i><i style="background:${p.a}"></i><i style="background:${p.b}"></i></span><b>${p.name}</b><small>${p.sub}</small></button>`).join('')}
 document.getElementById('paletteGrid').addEventListener('click',e=>{const b=e.target.closest('[data-palette]');if(!b)return;applyPalette(palettes.find(p=>p.name===b.dataset.palette));applyDesignSettings();toast('Палитра «'+selected+'» применена')});
-document.getElementById('modeBtn').addEventListener('click',()=>{light=!light;applyPalette(palettes.find(p=>p.name===selected));applyDesignSettings();document.getElementById('modeBtn').textContent=light?'☾':'☼';toast(light?'Светлая тема':'Тёмная тема')});
+document.getElementById('modeBtn').addEventListener('click',()=>{light=!light;localStorage.setItem('forma-light-mode',String(light));applyPalette(palettes.find(p=>p.name===selected));applyDesignSettings();document.getElementById('modeBtn').textContent=light?'☾':'☼';toast(light?'Светлая тема':'Тёмная тема')});
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.remove('show'),2200)}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const r=document.createElement('span');r.className='ripple';const rect=b.getBoundingClientRect(),size=Math.max(rect.width,rect.height);r.style.width=r.style.height=size+'px';r.style.left=(e.clientX-rect.left-size/2)+'px';r.style.top=(e.clientY-rect.top-size/2)+'px';b.appendChild(r);setTimeout(()=>r.remove(),600)});
 document.querySelectorAll('[data-toast]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.toast)));
 document.getElementById('toggle').addEventListener('click',e=>{const on=e.currentTarget.classList.toggle('on');document.getElementById('toggleText').textContent=on?'Переключатель включён':'Переключатель выключен';toast(on?'Режим активирован':'Режим отключён')});
 document.getElementById('shakeBtn').addEventListener('click',e=>{e.currentTarget.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-3px)'},{transform:'translateX(0)'}],{duration:350});toast('Вот так работает feedback')});
-document.getElementById('intensity').addEventListener('input',e=>{const v=e.target.value;document.getElementById('intensityValue').textContent=v+'%';const p=palettes.find(x=>x.name===selected);root.style.setProperty('--glow',p.glow.replace(/\.\d+\)/, (v/100).toFixed(2)+')'))});
+document.getElementById('intensity').addEventListener('input',e=>{const v=e.target.value;document.getElementById('intensityValue').textContent=v+'%';designSettings.glow=Number(v);const p=palettes.find(x=>x.name===selected);root.style.setProperty('--glow',p.glow.replace(/\.\d+\)/, (v/100).toFixed(2)+')'));saveSettings()});
 const observer=new IntersectionObserver(entries=>entries.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');observer.unobserve(x.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 const glow=document.getElementById('cursorGlow');
 // Cursor glow: coalesce pointer events and cap JS updates at 244 FPS.
@@ -31,14 +31,8 @@ window.addEventListener('pointermove',e=>{pointerX=e.clientX;pointerY=e.clientY;
 function updateCursorGlow(timestamp){glowFramePending=false;if(timestamp-lastGlowFrame<FRAME_MS){glowFramePending=true;requestAnimationFrame(updateCursorGlow);return}lastGlowFrame=timestamp;glow.style.transform=`translate3d(${pointerX-130}px,${pointerY-130}px,0)`;}
 applyPalette(palettes.find(p=>p.name===selected)||palettes[0]);
 
-const settingsPanel=document.getElementById('settingsPanel'),settingsOverlay=document.getElementById('settingsOverlay');
-function openSettings(){settingsPanel.classList.add('open');settingsOverlay.classList.add('open');settingsPanel.setAttribute('aria-hidden','false')}
-function closeSettings(){settingsPanel.classList.remove('open');settingsOverlay.classList.remove('open');settingsPanel.setAttribute('aria-hidden','true')}
-document.getElementById('settingsOpen').addEventListener('click',openSettings);
-document.getElementById('settingsClose').addEventListener('click',closeSettings);
-document.getElementById('settingsDone').addEventListener('click',closeSettings);
-settingsOverlay.addEventListener('click',closeSettings);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSettings()});
+const settingsPanel=document.getElementById('settingsPanel');
+document.getElementById('settingsOpen').addEventListener('click',e=>{e.preventDefault();settingsPanel.scrollIntoView({behavior:'smooth',block:'start'});});
 const settingDefaults={radius:20,blur:24,glow:22,cursor:true,motion:true,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false,tilt:false,magnetic:false,aurora:false,particles:false};
 const stylePresets={
  signature:{radius:20,blur:24,glow:22,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false},
@@ -135,7 +129,28 @@ function setupParticles(){
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(particleFrame);else if(designSettings.particles)setupParticles()});
 window.addEventListener('resize',()=>{if(designSettings.particles)setupParticles()},{passive:true});
-function exportProfile(){const blob=new Blob([JSON.stringify({version:1,settings:designSettings,palette:selected},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='forma-design-profile.json';a.click();URL.revokeObjectURL(a.href);toast('Профиль экспортирован');}
+
+function exportCSSProfile(){
+ const p=palettes.find(x=>x.name===selected)||palettes[0],s=designSettings;
+ const bg=light?'#f3f5fb':p.bg,surface=light?'#ffffff':p.surface,surface2=light?'#e9edf7':p.surface2;
+ const cssText=\`:root{color-scheme:\${light?'light':'dark'};--bg:\${bg};--surface:\${surface};--surface2:\${surface2};--text:\${light?'#171b29':'#f4f6ff'};--muted:\${light?'#667087':'#929bb2'};--line:\${light?'rgba(25,35,60,.12)':'rgba(255,255,255,.09)'};--a:\${p.a};--b:\${p.b};--glow:\${p.glow};--grad:linear-gradient(125deg,\${p.a},\${p.b});--ui-radius:\${s.radius}px;--glass-blur:\${s.blur}px;--section-space:\${s.density}px;--forma-motion-speed:\${Number(localStorage.getItem('forma-motion-speed')||100)}}
+body{background:radial-gradient(ellipse at 12% 0%,var(--glow),transparent 34%),var(--bg);color:var(--text);font-family:\${s.font==='editorial'?'Georgia,serif':s.font==='geometric'?'Manrope,Arial,sans-serif':'inherit'};transition:background .5s,color .35s}
+button,.btn,.card,.panel,.feature,article,input,textarea,select{border-radius:var(--ui-radius)}
+button,.btn,a,input,textarea,select{accent-color:var(--a)}
+.btn-primary,button.primary{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 8px 28px var(--glow)}
+.card,.panel,.feature,article{background:var(--surface);border:1px solid var(--line);box-shadow:\${s.shadow?'0 18px 55px rgba(0,0,0,.16)':'none'}}
+input:focus,textarea:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--a);outline-offset:3px}
+h1,h2,h3{letter-spacing:-.035em}
+\${s.button==='pill'?'button,.btn{border-radius:999px!important}':s.button==='sharp'?'button,.btn{border-radius:6px!important}':''}
+\${s.grid?'body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.1;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:42px 42px}':''}
+\${s.animation==='soft'? '*,*:before,*:after{transition-duration:.55s!important}':s.animation==='snappy'?'*,*:before,*:after{transition-duration:.12s!important}':s.animation==='cinematic'?'*,*:before,*:after{transition-duration:.8s!important}':''}
+\${s.motion?'':'*,*:before,*:after{animation:none!important;transition:none!important}'}
+\${s.font==='editorial'?'body{font-family:Georgia,serif}':s.font==='geometric'?'body{font-family:Manrope,Arial,sans-serif}':''}
+\`;
+ const blob=new Blob([cssText],{type:'text/css'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='forma-theme.css';a.click();URL.revokeObjectURL(url);toast('CSS-тема экспортирована — подключи её через link');
+}
+
+function exportProfile(){const blob=new Blob([JSON.stringify({format:'FORMA_THEME',version:2,settings:designSettings,palette:selected,mode:light?'light':'dark',motionSpeed:Number(localStorage.getItem('forma-motion-speed')||100),brightness:Number(localStorage.getItem('forma-brightness')||100)},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='forma-design-profile.json';a.click();URL.revokeObjectURL(a.href);toast('Профиль экспортирован');}
 document.getElementById('exportSettings').addEventListener('click',exportProfile);
 document.getElementById('importSettings').addEventListener('click',()=>document.getElementById('importSettingsFile').click());
 document.getElementById('importSettingsFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text()),incoming=data.settings||data;if(!incoming||typeof incoming!=='object')throw new Error();designSettings={...settingDefaults,...incoming};if(data.palette&&palettes.some(p=>p.name===data.palette))applyPalette(palettes.find(p=>p.name===data.palette));window.activeDesignPreset=null;applyDesignSettings();saveSettings();setupTilt();setupMagnetic();setupParticles();toast('Профиль импортирован');}catch{toast('Не удалось прочитать профиль JSON')}e.target.value='';});
