@@ -29,7 +29,7 @@
     root.style.setProperty('--surface2',light?'#e9edf7':(p.surface2||p.surface));
     root.style.setProperty('--text',light?'#171b29':p.text);
     root.style.setProperty('--muted',light?'#667087':p.muted);
-    root.style.setProperty('--glow',p.a+' '+Math.round(state.glow)+'%');
+    root.style.setProperty('--glow',`color-mix(in srgb, ${p.a} ${state.glow}%, transparent)`);
     root.style.setProperty('--ui-radius',state.radius+'px');
     root.style.setProperty('--forma-glow-opacity',(state.glow/100).toFixed(2));
     document.body.classList.toggle('forma-light',light);
