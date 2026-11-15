@@ -1,45 +1,48 @@
-# FORMA Design Engine
+# FORMA Design Engine 2.0
 
-Reusable visual customization engine for your websites.
+Portable visual customization layer for independent websites. No framework, build step, account, or server required.
 
-## Quick install
+## Install
 
-Add the stylesheet and core script before the closing `</body>` tag:
+Copy `forma-core.js` and `forma-core.css` into your project and include:
 
 ```html
-<link rel="stylesheet" href="design-engine.css">
-<script src="forma-core.js"></script>
+<link rel="stylesheet" href="./forma-core.css">
+<script src="./forma-core.js"></script>
 <script>
-  FORMA.init({ panel: true });
+  FORMA.init({
+    panel: true,
+    storageKey: "my-project-design",
+    defaultSettings: { palette: "violet", mode: "dark", radius: 18 },
+    onChange(settings) { console.log("Design changed", settings); }
+  });
 </script>
 ```
 
-The settings button and drawer are generated automatically. Preferences are stored locally in the browser and isolated by hostname + pathname.
+If `storageKey` is omitted, settings are isolated by hostname + pathname.
 
 ## API
 
-```js
-FORMA.init({
-  panel: true,
-  storageKey: 'my-storefront-design',
-  target: document.body,
-  defaultSettings: { palette: 'blue', mode: 'dark', radius: 18, glow: 20 },
-  allowedControls: ['palette', 'mode', 'radius', 'glow', 'font', 'buttons', 'motion'],
-  onChange(settings) { console.log('Design updated', settings); }
-});
+- `FORMA.init(options)` — initialize engine and optional generated settings drawer.
+- `FORMA.getSettings()` — return a copy of current settings.
+- `FORMA.setSettings(partial)` — update settings, persist, and emit `forma:change`.
+- `FORMA.reset()` — restore defaults.
+- `FORMA.destroy()` — remove injected UI and style layer.
 
-FORMA.getSettings();
-FORMA.setSettings({ palette: 'emerald', radius: 24 });
-FORMA.reset();
-FORMA.destroy();
-```
+## Options
 
-### Available controls
-`palette`, `mode`, `radius`, `glow`, `font`, `buttons`, `motion`.
+- `panel` (default true): create the floating settings button and drawer.
+- `storageKey`: custom localStorage key.
+- `target`: element or selector to mount the floating trigger.
+- `defaultSettings`: override initial values.
+- `onChange(settings)`: callback after changes.
 
-### Notes
-- No framework or build step required.
-- Uses localStorage only; no account or server required.
-- Set a unique `storageKey` per project when you need a stable custom key.
-- `target` may be a CSS selector or a DOM element; it controls where the floating settings button is mounted.
-- Existing site styles remain yours. FORMA writes design tokens to `:root` and adds opt-in classes to `body`.
+## Design tokens
+
+`--forma-accent`, `--forma-accent-2`, `--forma-radius`, `--forma-content-width`, `--forma-section-space`, `--forma-glow`, `--forma-bg`, `--forma-surface`, `--forma-text`.
+
+Opt-in helpers: `.forma-container`, `.forma-section`, `.forma-card`, `.forma-gradient`.
+
+## Demo
+
+Open [engine-test.html](./engine-test.html) to see the engine running on a page that has no FORMA Playground markup.
