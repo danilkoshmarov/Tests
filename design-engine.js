@@ -140,10 +140,13 @@ window.addEventListener('resize',()=>{if(designSettings.particles)setupParticles
 function exportCSSProfile(){
  const p=palettes.find(x=>x.name===selected)||palettes[0],s=designSettings;
  const bg=light?'#f3f5fb':p.bg,surface=light?'#ffffff':p.surface,surface2=light?'#e9edf7':p.surface2;
- const cssText=`:root{color-scheme:${light?'light':'dark'};--bg:${bg};--surface:${surface};--surface2:${surface2};--text:${light?'#171b29':'#f4f6ff'};--muted:${light?'#667087':'#929bb2'};--line:${light?'rgba(25,35,60,.12)':'rgba(255,255,255,.09)'};--a:${p.a};--b:${p.b};--glow:${p.glow};--grad:linear-gradient(125deg,${p.a},${p.b});--ui-radius:${s.radius}px;--glass-blur:${s.blur}px;--section-space:${s.density}px;--forma-motion-speed:${Number(localStorage.getItem('forma-motion-speed')||100)}}
-body{background:radial-gradient(ellipse at 12% 0%,var(--glow),transparent 34%),var(--bg);color:var(--text);font-family:${s.font==='editorial'?'Georgia,serif':s.font==='geometric'?'Manrope,Arial,sans-serif':'inherit'};transition:background .5s,color .35s}
+ const brightness=Number(localStorage.getItem('forma-brightness')||100),motionSpeed=Number(localStorage.getItem('forma-motion-speed')||100);
+ const glow=p.glow.replace(/\.\d+\)/,(s.glow/100).toFixed(2)+')');
+ const transition=(.25*100/motionSpeed).toFixed(3)+'s',animation=(8*100/motionSpeed).toFixed(3)+'s';
+ const cssText=`:root{color-scheme:${light?'light':'dark'};--bg:${bg};--surface:${surface};--surface2:${surface2};--text:${light?'#171b29':'#f4f6ff'};--muted:${light?'#667087':'#929bb2'};--line:${light?'rgba(25,35,60,.12)':'rgba(255,255,255,.09)'};--a:${p.a};--b:${p.b};--glow:${glow};--grad:linear-gradient(125deg,${p.a},${p.b});--ui-radius:${s.radius}px;--glass-blur:${s.blur}px;--section-space:${s.density}px;--forma-motion-speed:${motionSpeed};--forma-brightness:${brightness/100}}
+body{background:radial-gradient(ellipse at 12% 0%,var(--glow),transparent 34%),var(--bg);color:var(--text);filter:brightness(var(--forma-brightness));transition:background .5s,color .35s}
 button,.btn,.card,.panel,.feature,article,input,textarea,select{border-radius:var(--ui-radius)}
-button,.btn,a,input,textarea,select{accent-color:var(--a)}
+button,.btn,a,input,textarea,select{accent-color:var(--a);transition-duration:${transition}}
 .btn-primary,button.primary{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 8px 28px var(--glow)}
 .card,.panel,.feature,article{background:var(--surface);border:1px solid var(--line);box-shadow:${s.shadow?'0 18px 55px rgba(0,0,0,.16)':'none'}}
 input:focus,textarea:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--a);outline-offset:3px}
@@ -153,6 +156,7 @@ ${s.grid?'body:before{content:"";position:fixed;inset:0;pointer-events:none;z-in
 ${s.animation==='soft'? '*,*:before,*:after{transition-duration:.55s!important}':s.animation==='snappy'?'*,*:before,*:after{transition-duration:.12s!important}':s.animation==='cinematic'?'*,*:before,*:after{transition-duration:.8s!important}':''}
 ${s.motion?'':'*,*:before,*:after{animation:none!important;transition:none!important}'}
 ${s.font==='editorial'?'body{font-family:Georgia,serif}':s.font==='geometric'?'body{font-family:Manrope,Arial,sans-serif}':''}
+.orb,.glass-card,.mini-bars i,.aurora-layer:before,.aurora-layer:after{animation-duration:${animation}}
 `;
  const blob=new Blob([cssText],{type:'text/css'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='forma-theme.css';a.click();URL.revokeObjectURL(url);toast('CSS-тема экспортирована — подключи её через link');
 }
