@@ -30,7 +30,7 @@ Copy `forma-core.js` and `forma-core.css` into your project:
 Options: `panel` (default true), `storageKey`, `target`, `defaultSettings`, `onChange`.
 Without a custom key, preferences are isolated by hostname and pathname.
 
-## FORMA 3.0 studios (core)
+## FORMA 3.0 studios (core) (core)
 
 - **Component Studio:** card recipes (glass/solid/outline/flat), button recipes (gradient/solid/outline/ghost), input and navigation styles.
 - **Layout Builder:** content width, section spacing, grid columns and grid gap.
@@ -46,3 +46,15 @@ Without a custom key, preferences are isolated by hostname and pathname.
 ## Demo
 
 Open [engine-test.html](./engine-test.html). It intentionally contains no Playground-specific markup.
+
+
+## FORMA Studio 4.1
+
+Load `forma-studio.js` after your page scripts to enable the compact tabbed visual studio. On the main Playground, open it with the **Редактор** button in the top bar.
+
+- **Элементы:** select page elements and edit text, text color, background and radius.
+- **Секции:** add Hero, Benefits, Pricing, FAQ, Reviews and Contact blocks.
+- **Адаптив:** inspect the page in a separate desktop/tablet/mobile preview.
+- **CSS:** apply custom CSS live.
+- **Undo / Redo:** reverse editor changes without rebuilding the page DOM or breaking existing Playground interactions.
+- **Экспорт:** move FORMA settings and custom CSS as a JSON file.
