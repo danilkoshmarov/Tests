@@ -1,0 +1,13 @@
+/* FORMA tokens — opt-in helpers for any site */
+:root{--forma-accent:#8f7cff;--forma-accent-2:#55dfd0;--forma-radius:18px;--forma-content-width:1120px;--forma-section-space:72px;--forma-glow:.22;--forma-bg:#090d17;--forma-surface:#111827;--forma-text:#f3f5fb}
+[data-forma-mode=dark]{color-scheme:dark}[data-forma-mode=light]{color-scheme:light}
+.forma-container{width:min(var(--forma-content-width),calc(100% - 40px));margin-inline:auto}
+.forma-section{padding-block:var(--forma-section-space)}
+.forma-card{border-radius:var(--forma-radius);background:var(--forma-surface);color:var(--forma-text);box-shadow:0 15px 45px color-mix(in srgb,var(--forma-accent) calc(var(--forma-glow)*100%),transparent)}
+.forma-gradient{background:linear-gradient(120deg,var(--forma-accent),var(--forma-accent-2));background-clip:text;color:transparent}
+[data-forma-font=editorial]{font-family:Georgia,serif}[data-forma-font=geometric]{font-family:Manrope,system-ui,sans-serif}
+[data-forma-buttons=pill] button,[data-forma-buttons=pill] .button{border-radius:999px!important}
+[data-forma-buttons=sharp] button,[data-forma-buttons=sharp] .button{border-radius:3px!important}
+[data-forma-background=grid]{background-image:linear-gradient(#8881 1px,transparent 1px),linear-gradient(90deg,#8881 1px,transparent 1px);background-size:32px 32px}
+[data-forma-motion=off] *,[data-forma-motion=off] *:before,[data-forma-motion=off] *:after{animation:none!important;transition:none!important}
+[data-forma-motion=snappy] *{transition-duration:.14s!important}
