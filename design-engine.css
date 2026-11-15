@@ -69,3 +69,31 @@ body.aurora-on .aurora-layer{opacity:.22}
 .magnetic-enabled .btn,.magnetic-enabled .icon-btn{will-change:transform}
 .settings-export-row{display:flex;gap:8px;margin-top:12px}.settings-export-row .btn{flex:1;font-size:11px;padding:10px 8px}
 @media(prefers-reduced-motion:reduce){.aurora-layer:before,.aurora-layer:after{animation:none!important}.tilt-enabled .panel,.tilt-enabled .feature,.tilt-enabled .glass-card{transform:none!important}}
+
+/* Portable FORMA core panel */
+.forma-settings-trigger{position:fixed;right:22px;bottom:22px;z-index:10000;border:1px solid var(--line,rgba(255,255,255,.15));border-radius:999px;padding:12px 17px;background:var(--surface,#171a22);color:var(--text,#fff);box-shadow:0 10px 35px rgba(0,0,0,.22);font:600 13px inherit;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.forma-settings-trigger:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(0,0,0,.3)}
+.forma-settings-overlay{position:fixed;inset:0;z-index:10001;background:rgba(4,6,14,.58);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:.25s}
+.forma-settings-overlay.is-open{opacity:1;visibility:visible}
+.forma-settings-panel{position:fixed;z-index:10002;right:0;top:0;width:min(390px,100%);height:100dvh;overflow:auto;padding:26px;background:var(--surface,#171a22);color:var(--text,#fff);border-left:1px solid var(--line,rgba(255,255,255,.12));box-shadow:-20px 0 70px rgba(0,0,0,.3);transform:translateX(105%);transition:transform .32s cubic-bezier(.2,.8,.2,1);font-family:var(--font-ui,Arial,sans-serif)}
+.forma-settings-panel.is-open{transform:translateX(0)}
+.forma-panel-head{display:flex;align-items:center;justify-content:space-between;font-size:21px}
+.forma-panel-head button{font-size:25px;border:0;background:none;color:inherit;cursor:pointer}
+.forma-panel-copy{color:var(--muted,#999);font-size:13px;line-height:1.6}
+.forma-group-title{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--a,#9b83ff);margin:25px 0 12px}
+.forma-palette-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.forma-palette-chip,.forma-mode-button,.forma-panel-actions button{border:1px solid var(--line,rgba(255,255,255,.12));background:var(--surface2,var(--bg,#111));color:inherit;border-radius:12px;padding:11px;font:inherit;font-size:12px;cursor:pointer}
+.forma-palette-chip.is-active{border-color:var(--a,#9b83ff);box-shadow:0 0 0 1px var(--a,#9b83ff)}
+.forma-control{display:grid;gap:10px;padding:16px 0;border-bottom:1px solid var(--line,rgba(255,255,255,.1));font-size:13px}
+.forma-control input,.forma-control select{width:100%;accent-color:var(--a,#9b83ff)}
+.forma-control select{padding:10px;border-radius:10px;background:var(--bg,#111);color:inherit;border:1px solid var(--line,rgba(255,255,255,.15))}
+.forma-mode-button{width:100%;margin-top:14px}
+.forma-panel-actions{display:flex;gap:10px;margin-top:24px}
+.forma-panel-actions button{flex:1}
+.forma-panel-actions button:last-child{background:var(--a,#9b83ff);color:#111;border-color:transparent;font-weight:700}
+body.forma-motion-off *,body.forma-motion-off *:before,body.forma-motion-off *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+body.forma-font-editorial{font-family:Georgia,serif}
+body.forma-font-geometric{font-family:Manrope,Arial,sans-serif}
+body.forma-buttons-pill button,body.forma-buttons-pill .btn{border-radius:999px!important}
+body.forma-buttons-sharp button,body.forma-buttons-sharp .btn{border-radius:6px!important}
+@media(max-width:560px){.forma-settings-trigger{right:14px;bottom:14px}.forma-settings-panel{padding:21px}}
