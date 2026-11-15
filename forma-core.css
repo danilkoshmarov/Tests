@@ -1,4 +1,4 @@
-/* FORMA Design Engine 3.0 — portable design tokens and component recipes */
+/* FORMA Design Engine 4.0 — portable design tokens and component recipes */
 :root{--forma-accent:#8f7cff;--forma-accent-2:#55dfd0;--forma-radius:18px;--forma-content-width:1120px;--forma-section-space:72px;--forma-glow:.22;--forma-bg:#090d17;--forma-surface:#111827;--forma-text:#f3f5fb;--forma-grid-columns:3;--forma-grid-gap:18px;--forma-bg-intensity:.55;--forma-animation-speed:320ms}
 [data-forma-mode=dark]{color-scheme:dark}[data-forma-mode=light]{color-scheme:light}
 .forma-container{width:min(var(--forma-content-width),calc(100% - 40px));margin-inline:auto}
@@ -31,6 +31,6 @@
 .forma-hint{font-size:12px;opacity:.65;line-height:1.5}
 .forma-market-row{display:flex;gap:8px;margin-top:8px}.forma-market-row button{flex:1;border:1px solid #8886;background:transparent;color:inherit;border-radius:9px;padding:9px;cursor:pointer;text-align:left}
 .forma-market-row button:last-child{flex:0 0 38px;text-align:center}
-@media(max-width:760px){.forma-grid{grid-template-columns:repeat(min(var(--forma-grid-columns),2),minmax(0,1fr))}}
+@media(max-width:760px){.forma-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.forma-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.forma-card{transition:none}}
