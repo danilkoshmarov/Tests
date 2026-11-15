@@ -1,13 +1,36 @@
-/* FORMA tokens — opt-in helpers for any site */
-:root{--forma-accent:#8f7cff;--forma-accent-2:#55dfd0;--forma-radius:18px;--forma-content-width:1120px;--forma-section-space:72px;--forma-glow:.22;--forma-bg:#090d17;--forma-surface:#111827;--forma-text:#f3f5fb}
+/* FORMA Design Engine 3.0 — portable design tokens and component recipes */
+:root{--forma-accent:#8f7cff;--forma-accent-2:#55dfd0;--forma-radius:18px;--forma-content-width:1120px;--forma-section-space:72px;--forma-glow:.22;--forma-bg:#090d17;--forma-surface:#111827;--forma-text:#f3f5fb;--forma-grid-columns:3;--forma-grid-gap:18px;--forma-bg-intensity:.55;--forma-animation-speed:320ms}
 [data-forma-mode=dark]{color-scheme:dark}[data-forma-mode=light]{color-scheme:light}
 .forma-container{width:min(var(--forma-content-width),calc(100% - 40px));margin-inline:auto}
 .forma-section{padding-block:var(--forma-section-space)}
-.forma-card{border-radius:var(--forma-radius);background:var(--forma-surface);color:var(--forma-text);box-shadow:0 15px 45px color-mix(in srgb,var(--forma-accent) calc(var(--forma-glow)*100%),transparent)}
+.forma-grid{display:grid;grid-template-columns:repeat(var(--forma-grid-columns),minmax(0,1fr));gap:var(--forma-grid-gap)}
+.forma-card{border-radius:var(--forma-radius);background:var(--forma-surface);color:var(--forma-text);box-shadow:0 15px 45px color-mix(in srgb,var(--forma-accent) calc(var(--forma-glow)*100%),transparent);transition:transform var(--forma-animation-speed) ease,box-shadow var(--forma-animation-speed) ease,border-color var(--forma-animation-speed) ease}
 .forma-gradient{background:linear-gradient(120deg,var(--forma-accent),var(--forma-accent-2));background-clip:text;color:transparent}
+.forma-grid>*{min-width:0}
 [data-forma-font=editorial]{font-family:Georgia,serif}[data-forma-font=geometric]{font-family:Manrope,system-ui,sans-serif}
 [data-forma-buttons=pill] button,[data-forma-buttons=pill] .button{border-radius:999px!important}
 [data-forma-buttons=sharp] button,[data-forma-buttons=sharp] .button{border-radius:3px!important}
+[data-forma-button=solid] button,[data-forma-button=solid] .button{background:var(--forma-accent);color:white;border:1px solid var(--forma-accent)}
+[data-forma-button=outline] button,[data-forma-button=outline] .button{background:transparent;color:var(--forma-accent);border:1px solid var(--forma-accent)}
+[data-forma-button=ghost] button,[data-forma-button=ghost] .button{background:transparent;color:inherit;border:1px solid transparent}
+[data-forma-card=solid] .forma-card{background:var(--forma-surface);border:0;box-shadow:0 8px 24px #0002}
+[data-forma-card=outline] .forma-card{background:transparent;border:1px solid color-mix(in srgb,var(--forma-accent) 35%,transparent);box-shadow:none}
+[data-forma-card=flat] .forma-card{background:transparent;border:0;box-shadow:none}
+[data-forma-card=glass] .forma-card{background:color-mix(in srgb,var(--forma-surface) 78%,transparent);backdrop-filter:blur(16px);border:1px solid #ffffff20}
+[data-forma-input=underline] input,[data-forma-input=underline] textarea,[data-forma-input=underline] select{border:0;border-bottom:2px solid var(--forma-accent);border-radius:0;background:transparent}
+[data-forma-input=outline] input,[data-forma-input=outline] textarea,[data-forma-input=outline] select{border:1px solid var(--forma-accent);border-radius:var(--forma-radius);background:transparent}
+[data-forma-input=soft] input,[data-forma-input=soft] textarea,[data-forma-input=soft] select{border:1px solid #8883;border-radius:var(--forma-radius);background:var(--forma-surface);padding:.8em 1em}
+[data-forma-nav=floating] .forma-nav{border:1px solid #ffffff22;border-radius:999px;background:color-mix(in srgb,var(--forma-surface) 80%,transparent);backdrop-filter:blur(18px)}
+[data-forma-nav=solid] .forma-nav{background:var(--forma-surface);border-radius:0}
+[data-forma-nav=minimal] .forma-nav{background:transparent;border:0;box-shadow:none}
 [data-forma-background=grid]{background-image:linear-gradient(#8881 1px,transparent 1px),linear-gradient(90deg,#8881 1px,transparent 1px);background-size:32px 32px}
+[data-forma-background=aurora]::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 18% 20%,color-mix(in srgb,var(--forma-accent) calc(var(--forma-bg-intensity)*100%),transparent),transparent 42%),radial-gradient(ellipse at 82% 68%,color-mix(in srgb,var(--forma-accent-2) calc(var(--forma-bg-intensity)*80%),transparent),transparent 40%);filter:blur(55px);opacity:.7}
 [data-forma-motion=off] *,[data-forma-motion=off] *:before,[data-forma-motion=off] *:after{animation:none!important;transition:none!important}
-[data-forma-motion=snappy] *{transition-duration:.14s!important}
+[data-forma-motion=snappy] *{transition-duration:var(--forma-animation-speed)!important}
+[data-forma-motion=smooth] *{transition-duration:var(--forma-animation-speed)}
+.forma-hint{font-size:12px;opacity:.65;line-height:1.5}
+.forma-market-row{display:flex;gap:8px;margin-top:8px}.forma-market-row button{flex:1;border:1px solid #8886;background:transparent;color:inherit;border-radius:9px;padding:9px;cursor:pointer;text-align:left}
+.forma-market-row button:last-child{flex:0 0 38px;text-align:center}
+@media(max-width:760px){.forma-grid{grid-template-columns:repeat(min(var(--forma-grid-columns),2),minmax(0,1fr))}}
+@media(max-width:520px){.forma-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.forma-card{transition:none}}
