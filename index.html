@@ -15,18 +15,57 @@ button{font:inherit;color:inherit;cursor:pointer}a{color:inherit;text-decoration
 @media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth} .orb,.glass-card,.motion-ball{transform:translateZ(0)}}
 @media(max-width:850px){.hero{grid-template-columns:1fr;gap:20px;padding-top:70px}.visual{min-height:340px}.palette-grid{grid-template-columns:repeat(3,1fr)}.demo-grid{grid-template-columns:1fr}.nav{display:none}.feature-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.shell{width:min(100% - 30px,1180px)}.topbar{height:68px}.brand{font-size:15px}.top-actions .btn{padding:9px 11px;font-size:11px}.hero{padding:58px 0 42px}h1{font-size:48px}.hero-copy{font-size:14px}.hero-buttons{flex-wrap:wrap}.visual{min-height:300px}.orb{width:230px;height:230px}.glass-card{width:290px;padding:18px}.section{padding:52px 0}.section-head{display:block}.section-head p{margin-top:12px}.palette-grid{grid-template-columns:repeat(2,1fr);gap:9px}.palette{padding:8px}.swatches{height:52px}.feature-grid{grid-template-columns:1fr}.footer{gap:12px;flex-direction:column}.hero-note{gap:12px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* DESIGN CONTROL PANEL */
+:root{--ui-radius:20px;--glass-blur:24px}
+.panel,.feature,.glass-card{border-radius:var(--ui-radius)}
+.glass-card{backdrop-filter:blur(var(--glass-blur))}
+.settings-trigger{display:flex;align-items:center;gap:8px}
+.settings-overlay{position:fixed;inset:0;background:rgba(3,5,12,.58);backdrop-filter:blur(7px);z-index:40;opacity:0;visibility:hidden;transition:.25s}
+.settings-overlay.open{opacity:1;visibility:visible}
+.settings-panel{position:fixed;z-index:41;right:0;top:0;height:100dvh;width:min(390px,100%);padding:28px;background:var(--surface);border-left:1px solid var(--line);box-shadow:-25px 0 80px rgba(0,0,0,.28);transform:translateX(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);overflow:auto}
+.settings-panel.open{transform:translateX(0)}
+.settings-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.settings-head h2{font:800 25px Manrope;letter-spacing:-.04em;margin:0}
+.settings-intro{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:28px}
+.setting{padding:18px 0;border-top:1px solid var(--line)}
+.setting-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+.setting-top label{font-size:13px;font-weight:700}
+.setting-value{font-size:12px;color:var(--a);font-weight:700}
+.setting input[type=range]{width:100%;accent-color:var(--a)}
+.setting-hint{color:var(--muted);font-size:11px;margin-top:7px}
+.setting-switch{width:44px;height:25px;border:0;border-radius:30px;background:#596174;padding:3px;transition:.2s}
+.setting-switch span{display:block;width:19px;height:19px;border-radius:50%;background:#fff;transition:.2s}
+.setting-switch.on{background:var(--a)}
+.setting-switch.on span{transform:translateX(19px)}
+.settings-actions{display:flex;gap:10px;margin-top:22px}
+.settings-actions .btn{flex:1}
+body.no-cursor-glow .cursor-glow{display:none}
+@media(max-width:560px){.settings-panel{padding:22px}.settings-trigger .settings-label{display:none}}
+
 </style>
 </head>
 <body>
 <div class="cursor-glow" id="cursorGlow"></div>
-<header class="shell topbar"><a class="brand" href="#"><span class="brandmark"></span>FORMA<span style="color:var(--a)">.</span></a><nav class="nav"><a href="#palettes">Палитры</a><a href="#interactions">Интерактив</a><a href="#motion">Анимации</a></nav><div class="top-actions"><button class="icon-btn" id="modeBtn" aria-label="Переключить режим">☼</button><a class="btn btn-primary" href="#palettes">Исследовать ↗</a></div></header>
+<header class="shell topbar"><a class="brand" href="#"><span class="brandmark"></span>FORMA<span style="color:var(--a)">.</span></a><nav class="nav"><a href="#palettes">Палитры</a><a href="#interactions">Интерактив</a><a href="#motion">Анимации</a></nav><div class="top-actions"><button class="btn settings-trigger" id="settingsOpen" aria-label="Открыть настройки">⚙ <span class="settings-label">Настроить</span></button><button class="icon-btn" id="modeBtn" aria-label="Переключить режим">☼</button><a class="btn btn-primary" href="#palettes">Исследовать ↗</a></div></header>
 <main>
 <section class="shell hero"><div><div class="eyebrow"><span class="dot"></span> DIGITAL DESIGN PLAYGROUND</div><h1>Цвет — это<br><span class="gradient-text">настроение.</span></h1><p class="hero-copy">Экспериментальная площадка для визуальных идей. Выбирай палитры, изучай сочетания, взаимодействуй с элементами и наблюдай, как интерфейс оживает.</p><div class="hero-buttons"><a class="btn btn-primary" href="#palettes">Выбрать палитру <span>↗</span></a><a class="btn btn-outline" href="#interactions">Посмотреть эффекты</a></div><div class="hero-note"><div><strong>10</strong> авторских палитр</div><div><strong>∞</strong> сочетаний</div><div><strong>Live</strong> preview</div></div></div>
 <div class="visual"><div class="orb"></div><div class="glass-card"><div class="glass-head"><span>VISUAL ANALYTICS</span><span>✳ LIVE</span></div><div style="font:700 18px Manrope;margin-top:18px">Color harmony</div><div class="muted" style="font-size:11px">A little bit of visual magic</div><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i></div><div style="display:flex;justify-content:space-between;align-items:end"><div class="metric">98.4% <small>balance</small></div><span style="color:#72dfc4;font-size:11px">↗ +12.8%</span></div></div></div></section>
 <section class="shell section reveal" id="palettes"><div class="section-head"><div><div class="eyebrow">01 / COLOR SYSTEM</div><h2>Найди свой <span class="gradient-text">оттенок.</span></h2></div><p>Нажми на любую палитру — весь интерфейс мгновенно изменит характер. Выбор сохраняется на этом устройстве.</p></div><div class="palette-grid" id="paletteGrid"></div></section>
 <section class="shell section reveal" id="interactions"><div class="section-head"><div><div class="eyebrow">02 / MICRO INTERACTIONS</div><h2>Интерфейс отвечает.</h2></div><p>Хороший интерфейс не просто выглядит красиво. Он даёт понятную обратную связь на каждое действие.</p></div><div class="demo-grid"><article class="panel"><h3>Кнопки и состояния</h3><p class="muted">Наведи курсор, нажми и почувствуй движение. У каждого состояния своя маленькая реакция.</p><div class="button-row"><button class="btn btn-primary" data-toast="Готово! Действие выполнено">Нажми меня ↗</button><button class="btn btn-soft" data-toast="Сохранено в избранное">Сохранить ♡</button><button class="btn btn-outline" id="shakeBtn">Проверить эффект</button></div><div class="interaction"><button class="toggle" id="toggle"><span></span></button><span class="muted" id="toggleText">Переключатель выключен</span></div><input class="demo-input" placeholder="Нажми сюда — появится focus-состояние"></article><article class="panel"><h3>Живой отклик</h3><p class="muted">Попробуй переключить состояние или изменить интенсивность эффекта.</p><div class="motion-demo" id="motionDemo"><div class="motion-ball"></div><span class="motion-label">НАВЕДИ НА ПОЛЕ</span></div><label class="muted" for="intensity">Интенсивность свечения <b id="intensityValue">22%</b></label><input class="range" id="intensity" type="range" min="5" max="60" value="22"></article></div></section>
 <section class="shell section reveal" id="motion"><div class="section-head"><div><div class="eyebrow">03 / DESIGN DETAILS</div><h2>Маленькие детали.<br><span class="gradient-text">Большое впечатление.</span></h2></div><p>Слои, глубина, движение и ритм. Именно детали превращают набор блоков в цельный цифровой продукт.</p></div><div class="feature-grid"><article class="feature"><div class="feature-icon">✦</div><h3>Мягкое свечение</h3><p>Акцентный свет помогает выделить важное и добавить глубину без визуального шума.</p></article><article class="feature"><div class="feature-icon">◈</div><h3>Стеклянные слои</h3><p>Полупрозрачные поверхности и blur создают ощущение пространства и лёгкости.</p></article><article class="feature"><div class="feature-icon">↗</div><h3>Hover motion</h3><p>Карточки приподнимаются, границы подсвечиваются, а элементы реагируют на курсор.</p></article><article class="feature"><div class="feature-icon">◎</div><h3>Scroll reveal</h3><p>Блоки плавно появляются по мере прокрутки, сохраняя темп и внимание.</p></article><article class="feature"><div class="feature-icon">⌁</div><h3>Градиентная глубина</h3><p>Несколько цветовых слоёв формируют атмосферу и фирменный визуальный язык.</p></article><article class="feature"><div class="feature-icon">⤢</div><h3>Responsive layout</h3><p>Сетка перестраивается под экран, а композиция остаётся цельной и удобной.</p></article></div></section>
-</main><footer class="shell footer"><span>© 2026 FORMA DESIGN LAB</span><span>Создано для экспериментов и хорошего вкуса.</span><span>MADE TO MOVE ✳</span></footer><div class="toast" id="toast" role="status"></div>
+</main><footer class="shell footer"><span>© 2026 FORMA DESIGN LAB</span><span>Создано для экспериментов и хорошего вкуса.</span><span>MADE TO MOVE ✳</span></footer><div class="settings-overlay" id="settingsOverlay"></div>
+<aside class="settings-panel" id="settingsPanel" aria-label="Настройки дизайна" aria-hidden="true">
+ <div class="settings-head"><h2>Дизайн-настройки</h2><button class="icon-btn" id="settingsClose" aria-label="Закрыть">✕</button></div>
+ <p class="settings-intro">Настрой внешний вид FORMA в реальном времени. Изменения сохраняются на этом устройстве.</p>
+ <div class="setting"><div class="setting-top"><label for="radiusControl">Скругление элементов</label><span class="setting-value" id="radiusValue">20 px</span></div><input id="radiusControl" type="range" min="8" max="32" value="20"><div class="setting-hint">Меняет характер карточек и стеклянного блока.</div></div>
+ <div class="setting"><div class="setting-top"><label for="blurControl">Сила стеклянного эффекта</label><span class="setting-value" id="blurValue">24 px</span></div><input id="blurControl" type="range" min="0" max="40" value="24"><div class="setting-hint">Управляет размытием фона под glass-карточкой.</div></div>
+ <div class="setting"><div class="setting-top"><label for="glowControl">Интенсивность свечения</label><span class="setting-value" id="glowValue">22%</span></div><input id="glowControl" type="range" min="5" max="55" value="22"><div class="setting-hint">Изменяет цветное свечение интерфейса.</div></div>
+ <div class="setting"><div class="setting-top"><label>Свечение за курсором</label><button class="setting-switch on" id="cursorSwitch" aria-label="Переключить свечение курсора"><span></span></button></div><div class="setting-hint">Можно отключить для более спокойного интерфейса.</div></div>
+ <div class="setting"><div class="setting-top"><label>Анимации интерфейса</label><button class="setting-switch on" id="motionSwitch" aria-label="Переключить анимации"><span></span></button></div><div class="setting-hint">Отключает декоративные движения и переходы.</div></div>
+ <div class="settings-actions"><button class="btn btn-outline" id="settingsReset">Сбросить</button><button class="btn btn-primary" id="settingsDone">Готово ✓</button></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
 <script>
 const palettes=[
 {name:'Electric Violet',sub:'bold · futuristic',a:'#9b83ff',b:'#50e3d2',bg:'#090b13',surface:'#121626',surface2:'#1a2033',glow:'rgba(155,131,255,.23)'},
@@ -60,4 +99,42 @@ const MAX_FPS=244,FRAME_MS=1000/MAX_FPS;let pointerX=-1000,pointerY=-1000,lastGl
 window.addEventListener('pointermove',e=>{pointerX=e.clientX;pointerY=e.clientY;if(!glowFramePending){glowFramePending=true;requestAnimationFrame(updateCursorGlow)}},{passive:true});
 function updateCursorGlow(timestamp){glowFramePending=false;if(timestamp-lastGlowFrame<FRAME_MS){glowFramePending=true;requestAnimationFrame(updateCursorGlow);return}lastGlowFrame=timestamp;glow.style.transform=`translate3d(${pointerX-130}px,${pointerY-130}px,0)`;}
 applyPalette(palettes.find(p=>p.name===selected)||palettes[0]);
+
+const settingsPanel=document.getElementById('settingsPanel'),settingsOverlay=document.getElementById('settingsOverlay');
+function openSettings(){settingsPanel.classList.add('open');settingsOverlay.classList.add('open');settingsPanel.setAttribute('aria-hidden','false')}
+function closeSettings(){settingsPanel.classList.remove('open');settingsOverlay.classList.remove('open');settingsPanel.setAttribute('aria-hidden','true')}
+document.getElementById('settingsOpen').addEventListener('click',openSettings);
+document.getElementById('settingsClose').addEventListener('click',closeSettings);
+document.getElementById('settingsDone').addEventListener('click',closeSettings);
+settingsOverlay.addEventListener('click',closeSettings);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSettings()});
+const settingDefaults={radius:20,blur:24,glow:22,cursor:true,motion:true};
+function readSettings(){try{return {...settingDefaults,...JSON.parse(localStorage.getItem('forma-design-settings')||'{}')}}catch{return {...settingDefaults}}}
+let designSettings=readSettings();
+function saveSettings(){localStorage.setItem('forma-design-settings',JSON.stringify(designSettings))}
+function setSwitch(id,on){const el=document.getElementById(id);el.classList.toggle('on',on);el.setAttribute('aria-pressed',String(on))}
+function applyDesignSettings(){
+ root.style.setProperty('--ui-radius',designSettings.radius+'px');
+ root.style.setProperty('--glass-blur',designSettings.blur+'px');
+ const p=palettes.find(x=>x.name===selected)||palettes[0];
+ const alpha=(designSettings.glow/100).toFixed(2);
+ root.style.setProperty('--glow',p.glow.replace(/\.\d+\)/,alpha+')'));
+ document.getElementById('radiusControl').value=designSettings.radius;
+ document.getElementById('radiusValue').textContent=designSettings.radius+' px';
+ document.getElementById('blurControl').value=designSettings.blur;
+ document.getElementById('blurValue').textContent=designSettings.blur+' px';
+ document.getElementById('glowControl').value=designSettings.glow;
+ document.getElementById('glowValue').textContent=designSettings.glow+'%';
+ document.body.classList.toggle('no-cursor-glow',!designSettings.cursor);
+ document.body.classList.toggle('motion-off',!designSettings.motion);
+ setSwitch('cursorSwitch',designSettings.cursor);setSwitch('motionSwitch',designSettings.motion);
+}
+[['radiusControl','radius','radiusValue',' px'],['blurControl','blur','blurValue',' px'],['glowControl','glow','glowValue','%']].forEach(([id,key,label,unit])=>{
+ document.getElementById(id).addEventListener('input',e=>{designSettings[key]=Number(e.target.value);document.getElementById(label).textContent=designSettings[key]+unit;applyDesignSettings();saveSettings()});
+});
+document.getElementById('cursorSwitch').addEventListener('click',()=>{designSettings.cursor=!designSettings.cursor;applyDesignSettings();saveSettings()});
+document.getElementById('motionSwitch').addEventListener('click',()=>{designSettings.motion=!designSettings.motion;applyDesignSettings();saveSettings()});
+document.getElementById('settingsReset').addEventListener('click',()=>{designSettings={...settingDefaults};applyDesignSettings();saveSettings();toast('Настройки сброшены')});
+
+applyDesignSettings();
 </script></body></html>
