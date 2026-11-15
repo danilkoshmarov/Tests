@@ -44,6 +44,27 @@ body.no-cursor-glow .cursor-glow{display:none}
 body.motion-off *,body.motion-off *:before,body.motion-off *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 @media(max-width:560px){.settings-panel{padding:22px}.settings-trigger .settings-label{display:none}}
 
+
+:root{--font-ui:'DM Sans',sans-serif;--font-display:'Manrope',sans-serif;--section-space:76px;--content-width:1180px}
+body{font-family:var(--font-ui)}h1,h2,h3,.brand,.metric,.settings-head h2{font-family:var(--font-display)}
+.shell{width:min(var(--content-width),calc(100% - 48px))}.section{padding:var(--section-space) 0}
+.btn,.icon-btn,.palette,.feature,.panel{border-radius:var(--ui-radius)}
+body.buttons-pill .btn,body.buttons-pill .icon-btn{border-radius:999px}
+body.buttons-sharp .btn,body.buttons-sharp .icon-btn{border-radius:7px}
+body.shadow-off .panel,body.shadow-off .glass-card,body.shadow-off .feature{box-shadow:none}
+body.bg-grid:after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.12;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 80%)}
+body.font-editorial{--font-ui:Georgia,serif;--font-display:Georgia,serif}body.font-geometric{--font-ui:'Manrope',sans-serif;--font-display:'Manrope',sans-serif}
+body.motion-soft .feature:hover,body.motion-soft .palette:hover{transition-duration:.55s}
+body.motion-snappy .feature,body.motion-snappy .palette,body.motion-snappy .btn{transition-duration:.12s}
+body.motion-cinematic .feature,body.motion-cinematic .palette,body.motion-cinematic .btn{transition-duration:.8s}
+.settings-select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:13px;outline:none}
+.settings-select:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--glow)}
+.setting-preset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.preset-chip{border:1px solid var(--line);background:var(--surface2);border-radius:12px;padding:10px 8px;font-size:11px;text-align:center;transition:.2s}
+.preset-chip:hover,.preset-chip.active{border-color:var(--a);background:color-mix(in srgb,var(--a) 15%,var(--surface2))}
+.settings-divider{font:700 10px var(--font-ui);letter-spacing:.16em;color:var(--a);text-transform:uppercase;padding:20px 0 4px}
+@media(max-width:560px){.shell{width:min(100% - 30px,var(--content-width))}}
+
 </style>
 </head>
 <body>
@@ -64,6 +85,18 @@ body.motion-off *,body.motion-off *:before,body.motion-off *:after{animation:non
  <div class="setting"><div class="setting-top"><label for="glowControl">Интенсивность свечения</label><span class="setting-value" id="glowValue">22%</span></div><input id="glowControl" type="range" min="5" max="55" value="22"><div class="setting-hint">Изменяет цветное свечение интерфейса.</div></div>
  <div class="setting"><div class="setting-top"><label>Свечение за курсором</label><button class="setting-switch on" id="cursorSwitch" aria-label="Переключить свечение курсора"><span></span></button></div><div class="setting-hint">Можно отключить для более спокойного интерфейса.</div></div>
  <div class="setting"><div class="setting-top"><label>Анимации интерфейса</label><button class="setting-switch on" id="motionSwitch" aria-label="Переключить анимации"><span></span></button></div><div class="setting-hint">Отключает декоративные движения и переходы.</div></div>
+
+ <div class="settings-divider">Быстрые стили</div>
+ <div class="setting"><div class="setting-top"><label>Готовый характер интерфейса</label></div><div class="setting-preset-grid">
+ <button class="preset-chip" data-preset="signature">✦ Signature</button><button class="preset-chip" data-preset="minimal">◌ Minimal</button><button class="preset-chip" data-preset="soft">☁ Soft</button><button class="preset-chip" data-preset="bold">⚡ Bold</button></div></div>
+ <div class="settings-divider">Типографика и форма</div>
+ <div class="setting"><div class="setting-top"><label for="fontControl">Шрифт интерфейса</label></div><select class="settings-select" id="fontControl"><option value="modern">Modern — DM Sans</option><option value="geometric">Geometric — Manrope</option><option value="editorial">Editorial — Serif</option></select></div>
+ <div class="setting"><div class="setting-top"><label for="buttonControl">Форма кнопок</label></div><select class="settings-select" id="buttonControl"><option value="rounded">Мягкие скругления</option><option value="pill">Капсулы</option><option value="sharp">Геометричные</option></select></div>
+ <div class="setting"><div class="setting-top"><label for="densityControl">Плотность композиции</label><span class="setting-value" id="densityValue">76 px</span></div><input id="densityControl" type="range" min="42" max="110" value="76"><div class="setting-hint">Вертикальный ритм между секциями.</div></div>
+ <div class="settings-divider">Атмосфера и движение</div>
+ <div class="setting"><div class="setting-top"><label for="animationControl">Характер анимаций</label></div><select class="settings-select" id="animationControl"><option value="balanced">Balanced — сбалансированный</option><option value="soft">Soft — плавный</option><option value="snappy">Snappy — быстрый</option><option value="cinematic">Cinematic — медленный</option></select></div>
+ <div class="setting"><div class="setting-top"><label>Глубокие тени</label><button class="setting-switch on" id="shadowSwitch" aria-label="Переключить тени"><span></span></button></div><div class="setting-hint">Добавляет объём карточкам и панелям.</div></div>
+ <div class="setting"><div class="setting-top"><label>Фоновая сетка</label><button class="setting-switch" id="gridSwitch" aria-label="Переключить сетку"><span></span></button></div><div class="setting-hint">Тонкая техническая сетка на фоне.</div></div>
  <div class="settings-actions"><button class="btn btn-outline" id="settingsReset">Сбросить</button><button class="btn btn-primary" id="settingsDone">Готово ✓</button></div>
 </aside>
 <div class="toast" id="toast" role="status"></div>
@@ -109,7 +142,13 @@ document.getElementById('settingsClose').addEventListener('click',closeSettings)
 document.getElementById('settingsDone').addEventListener('click',closeSettings);
 settingsOverlay.addEventListener('click',closeSettings);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSettings()});
-const settingDefaults={radius:20,blur:24,glow:22,cursor:true,motion:true};
+const settingDefaults={radius:20,blur:24,glow:22,cursor:true,motion:true,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false};
+const stylePresets={
+ signature:{radius:20,blur:24,glow:22,font:'modern',button:'rounded',density:76,animation:'balanced',shadow:true,grid:false},
+ minimal:{radius:12,blur:8,glow:10,font:'geometric',button:'sharp',density:58,animation:'snappy',shadow:false,grid:false},
+ soft:{radius:28,blur:34,glow:35,font:'modern',button:'pill',density:92,animation:'soft',shadow:true,grid:false},
+ bold:{radius:14,blur:14,glow:48,font:'geometric',button:'rounded',density:68,animation:'cinematic',shadow:true,grid:true}
+};
 function readSettings(){try{return {...settingDefaults,...JSON.parse(localStorage.getItem('forma-design-settings')||'{}')}}catch{return {...settingDefaults}}}
 let designSettings=readSettings();
 function saveSettings(){localStorage.setItem('forma-design-settings',JSON.stringify(designSettings))}
@@ -117,6 +156,21 @@ function setSwitch(id,on){const el=document.getElementById(id);el.classList.togg
 function applyDesignSettings(){
  root.style.setProperty('--ui-radius',designSettings.radius+'px');
  root.style.setProperty('--glass-blur',designSettings.blur+'px');
+ root.style.setProperty('--section-space',designSettings.density+'px');
+ document.body.classList.toggle('font-editorial',designSettings.font==='editorial');
+ document.body.classList.toggle('font-geometric',designSettings.font==='geometric');
+ document.body.classList.toggle('buttons-pill',designSettings.button==='pill');
+ document.body.classList.toggle('buttons-sharp',designSettings.button==='sharp');
+ document.body.classList.toggle('shadow-off',!designSettings.shadow);
+ document.body.classList.toggle('bg-grid',designSettings.grid);
+ ['soft','snappy','cinematic'].forEach(v=>document.body.classList.toggle('motion-'+v,designSettings.animation===v));
+ document.getElementById('fontControl').value=designSettings.font;
+ document.getElementById('buttonControl').value=designSettings.button;
+ document.getElementById('densityControl').value=designSettings.density;
+ document.getElementById('densityValue').textContent=designSettings.density+' px';
+ document.getElementById('animationControl').value=designSettings.animation;
+ setSwitch('shadowSwitch',designSettings.shadow);setSwitch('gridSwitch',designSettings.grid);
+ document.querySelectorAll('[data-preset]').forEach(b=>b.classList.toggle('active',b.dataset.preset===window.activeDesignPreset));
  const p=palettes.find(x=>x.name===selected)||palettes[0];
  const alpha=(designSettings.glow/100).toFixed(2);
  root.style.setProperty('--glow',p.glow.replace(/\.\d+\)/,alpha+')'));
@@ -135,7 +189,11 @@ function applyDesignSettings(){
 });
 document.getElementById('cursorSwitch').addEventListener('click',()=>{designSettings.cursor=!designSettings.cursor;applyDesignSettings();saveSettings()});
 document.getElementById('motionSwitch').addEventListener('click',()=>{designSettings.motion=!designSettings.motion;applyDesignSettings();saveSettings()});
-document.getElementById('settingsReset').addEventListener('click',()=>{designSettings={...settingDefaults};applyDesignSettings();saveSettings();toast('Настройки сброшены')});
+document.getElementById('settingsReset').addEventListener('click',()=>{designSettings={...settingDefaults};window.activeDesignPreset='signature';applyDesignSettings();saveSettings();toast('Настройки сброшены')});
+[['fontControl','font'],['buttonControl','button'],['animationControl','animation']].forEach(([id,key])=>document.getElementById(id).addEventListener('change',e=>{designSettings[key]=e.target.value;window.activeDesignPreset=null;applyDesignSettings();saveSettings()}));
+document.getElementById('densityControl').addEventListener('input',e=>{designSettings.density=Number(e.target.value);window.activeDesignPreset=null;applyDesignSettings();saveSettings()});
+['shadow','grid'].forEach(key=>document.getElementById(key+'Switch').addEventListener('click',()=>{designSettings[key]=!designSettings[key];window.activeDesignPreset=null;applyDesignSettings();saveSettings()}));
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{window.activeDesignPreset=b.dataset.preset;designSettings={...designSettings,...stylePresets[b.dataset.preset]};applyDesignSettings();saveSettings();toast('Стиль '+b.textContent.trim()+' применён')}));
 
 applyDesignSettings();
 </script></body></html>
