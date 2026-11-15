@@ -41,6 +41,7 @@ button{font:inherit;color:inherit;cursor:pointer}a{color:inherit;text-decoration
 .settings-actions{display:flex;gap:10px;margin-top:22px}
 .settings-actions .btn{flex:1}
 body.no-cursor-glow .cursor-glow{display:none}
+body.motion-off *,body.motion-off *:before,body.motion-off *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 @media(max-width:560px){.settings-panel{padding:22px}.settings-trigger .settings-label{display:none}}
 
 </style>
@@ -83,8 +84,8 @@ let selected=localStorage.getItem('forma-palette')||'Electric Violet';let light=
 const root=document.documentElement;
 function applyPalette(p){selected=p.name;root.style.setProperty('--a',p.a);root.style.setProperty('--b',p.b);root.style.setProperty('--bg',light?'#f3f5fb':p.bg);root.style.setProperty('--surface',light?'#ffffff':p.surface);root.style.setProperty('--surface2',light?'#e9edf7':p.surface2);root.style.setProperty('--glow',p.glow);root.style.setProperty('--grad',`linear-gradient(125deg,${p.a},${p.b})`);document.body.style.color=light?'#171b29':'var(--text)';document.body.style.setProperty('--text',light?'#171b29':'#f4f6ff');document.body.style.setProperty('--muted',light?'#667087':'#929bb2');document.body.style.setProperty('--line',light?'rgba(25,35,60,.12)':'rgba(255,255,255,.09)');localStorage.setItem('forma-palette',p.name);renderPalettes()}
 function renderPalettes(){document.getElementById('paletteGrid').innerHTML=palettes.map(p=>`<button class="palette ${p.name===selected?'active':''}" data-palette="${p.name}"><span class="check">✓</span><span class="swatches"><i style="background:${p.bg}"></i><i style="background:${p.surface}"></i><i style="background:${p.a}"></i><i style="background:${p.b}"></i></span><b>${p.name}</b><small>${p.sub}</small></button>`).join('')}
-document.getElementById('paletteGrid').addEventListener('click',e=>{const b=e.target.closest('[data-palette]');if(!b)return;applyPalette(palettes.find(p=>p.name===b.dataset.palette));toast('Палитра «'+selected+'» применена')});
-document.getElementById('modeBtn').addEventListener('click',()=>{light=!light;applyPalette(palettes.find(p=>p.name===selected));document.getElementById('modeBtn').textContent=light?'☾':'☼';toast(light?'Светлая тема':'Тёмная тема')});
+document.getElementById('paletteGrid').addEventListener('click',e=>{const b=e.target.closest('[data-palette]');if(!b)return;applyPalette(palettes.find(p=>p.name===b.dataset.palette));applyDesignSettings();toast('Палитра «'+selected+'» применена')});
+document.getElementById('modeBtn').addEventListener('click',()=>{light=!light;applyPalette(palettes.find(p=>p.name===selected));applyDesignSettings();document.getElementById('modeBtn').textContent=light?'☾':'☼';toast(light?'Светлая тема':'Тёмная тема')});
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.remove('show'),2200)}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const r=document.createElement('span');r.className='ripple';const rect=b.getBoundingClientRect(),size=Math.max(rect.width,rect.height);r.style.width=r.style.height=size+'px';r.style.left=(e.clientX-rect.left-size/2)+'px';r.style.top=(e.clientY-rect.top-size/2)+'px';b.appendChild(r);setTimeout(()=>r.remove(),600)});
 document.querySelectorAll('[data-toast]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.toast)));
