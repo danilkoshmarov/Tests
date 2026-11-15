@@ -6,13 +6,11 @@ const $=(s,r=document)=>r.querySelector(s);
 const main=$("main")||$("body");
 let panel,overlay,activeTab="elements",selected=null,picking=false,cssText="",undoStack=[],redoStack=[],previewFrame=null;
 const make=(tag,attrs={},text)=>{const n=document.createElement(tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n;};
-const snapshot=()=>({html:main.innerHTML,css:cssText,settings:window.FORMA?.getSettings?.()||null});
-const remember=()=>{undoStack.push(snapshot());if(undoStack.length>30)undoStack.shift();redoStack=[];syncHistory();};
+const record=(undo,redo)=>{undoStack.push({undo,redo});if(undoStack.length>50)undoStack.shift();redoStack=[];syncHistory();};
 function syncHistory(){const u=$("#f41-undo"),r=$("#f41-redo");if(u)u.disabled=!undoStack.length;if(r)r.disabled=!redoStack.length;}
 function applyCSS(){let s=$("[data-f41-custom]");if(!s){s=make("style",{"data-f41-custom":""});document.head.append(s);}s.textContent=cssText;}
-function restore(s){main.innerHTML=s.html;cssText=s.css||"";applyCSS();if(s.settings&&window.FORMA?.setSettings)window.FORMA.setSettings(s.settings);selected=null;syncHistory();renderTab();}
-function undo(){if(!undoStack.length)return;redoStack.push(snapshot());restore(undoStack.pop());}
-function redo(){if(!redoStack.length)return;undoStack.push(snapshot());restore(redoStack.pop());}
+function undo(){const op=undoStack.pop();if(!op)return;op.undo();redoStack.push(op);syncHistory();renderTab();}
+function redo(){const op=redoStack.pop();if(!op)return;op.redo();undoStack.push(op);syncHistory();renderTab();}
 const btn=(label,fn,cls="")=>{const b=make("button",{type:"button",class:cls},label);b.addEventListener("click",fn);return b;};
 const field=(label,node)=>{const w=make("label",{class:"f41-field"});w.append(make("span",{},label),node);return w;};
 const input=(type,value)=>make("input",{type,value});
@@ -72,10 +70,10 @@ function renderTab(){
   const pick=btn(picking?"Завершить выбор":"✦ Выбрать элемент",()=>{picking=!picking;pick.textContent=picking?"Завершить выбор":"✦ Выбрать элемент";});pick.className="f41-primary";body.append(pick);
   const label=make("p",{class:"f41-status"},selected?"Выбран: "+selected.tagName.toLowerCase()+" · "+[...selected.classList].filter(x=>x!=="f41-selected").join("."):"Пока ничего не выбрано.");body.append(label);
   const text=make("textarea");text.value=selected&&!selected.children.length?selected.textContent:"";text.placeholder=selected?.children.length?"У выбранного блока есть вложенные элементы — выбери конкретный текстовый элемент.":"Сначала выбери элемент.";
-  const saveText=btn("Применить текст",()=>{if(!selected||selected.children.length)return;remember();selected.textContent=text.value;});body.append(field("Текст (для текстовых элементов)",text),saveText);
-  const color=input("color",selected?rgbHex(getComputedStyle(selected).color):"#ffffff");color.addEventListener("change",()=>{if(selected){remember();selected.style.color=color.value;}});body.append(field("Цвет текста",color));
-  const bg=input("color",selected?rgbHex(getComputedStyle(selected).backgroundColor):"#111827");bg.addEventListener("change",()=>{if(selected){remember();selected.style.backgroundColor=bg.value;}});body.append(field("Цвет фона",bg));
-  const rad=input("range",selected?parseInt(getComputedStyle(selected).borderRadius)||0:18);rad.min=0;rad.max=60;rad.addEventListener("change",()=>{if(selected){remember();selected.style.borderRadius=rad.value+"px";}});body.append(field("Скругление",rad));
+  const saveText=btn("Применить текст",()=>{if(!selected||selected.children.length)return;const node=selected,old=node.textContent,next=text.value;record(()=>node.textContent=old,()=>node.textContent=next);node.textContent=next;});body.append(field("Текст (для текстовых элементов)",text),saveText);
+  const color=input("color",selected?rgbHex(getComputedStyle(selected).color):"#ffffff");color.addEventListener("change",()=>{if(selected){const node=selected,old=node.style.color,next=color.value;record(()=>node.style.color=old,()=>node.style.color=next);node.style.color=next;}});body.append(field("Цвет текста",color));
+  const bg=input("color",selected?rgbHex(getComputedStyle(selected).backgroundColor):"#111827");bg.addEventListener("change",()=>{if(selected){const node=selected,old=node.style.backgroundColor,next=bg.value;record(()=>node.style.backgroundColor=old,()=>node.style.backgroundColor=next);node.style.backgroundColor=next;}});body.append(field("Цвет фона",bg));
+  const rad=input("range",selected?parseInt(getComputedStyle(selected).borderRadius)||0:18);rad.min=0;rad.max=60;rad.addEventListener("change",()=>{if(selected){const node=selected,old=node.style.borderRadius,next=rad.value+"px";record(()=>node.style.borderRadius=old,()=>node.style.borderRadius=next);node.style.borderRadius=next;}});body.append(field("Скругление",rad));
   body.append(make("p",{class:"f41-note"},"Подсказка: для отмены используй кнопки сверху или Ctrl + Z."));
  }
  if(activeTab==="sections"){
@@ -95,12 +93,12 @@ function renderTab(){
  if(activeTab==="css"){
   body.append(make("h3",{},"Собственный CSS"),make("p",{class:"f41-note"},"Правила применяются к текущей странице. Используй классы из инспектора браузера или выбери элемент на вкладке «Элементы»."));
   const editor=make("textarea");editor.value=cssText;editor.placeholder=".hero h1 { letter-spacing: -0.06em; }\n.panel { border-radius: 24px; }";body.append(field("CSS-код",editor));
-  body.append(btn("Применить CSS",()=>{remember();cssText=editor.value;applyCSS();},"f41-primary"),btn("Очистить CSS",()=>{remember();cssText="";editor.value="";applyCSS();}));
+  body.append(btn("Применить CSS",()=>{const old=cssText,next=editor.value;record(()=>{cssText=old;applyCSS();},()=>{cssText=next;applyCSS();});cssText=next;applyCSS();},"f41-primary"),btn("Очистить CSS",()=>{const old=cssText;record(()=>{cssText=old;applyCSS();},()=>{cssText="";applyCSS();});cssText="";editor.value="";applyCSS();}));
  }
  if(activeTab==="export"){
-  body.append(make("h3",{},"Перенос дизайна"),make("p",{class:"f41-note"},"Сохраняет настройки FORMA, пользовательский CSS и HTML основного содержимого."));
-  body.append(btn("↓ Экспортировать тему JSON",()=>{const data={version:"4.1",settings:window.FORMA?.getSettings?.()||null,customCss:cssText,html:main.innerHTML};download(JSON.stringify(data,null,2),"forma-theme-4.1.json","application/json");},"f41-primary"));
-  const file=input("file","");file.accept=".json,application/json";file.addEventListener("change",async()=>{if(!file.files[0])return;try{const d=JSON.parse(await file.files[0].text());if(!confirm("Импорт заменит содержимое основной страницы. Продолжить?"))return;remember();if(d.settings&&window.FORMA?.setSettings)window.FORMA.setSettings(d.settings);if(typeof d.customCss==="string"){cssText=d.customCss;applyCSS();}if(typeof d.html==="string"){const parsed=new DOMParser().parseFromString(d.html,"text/html");parsed.querySelectorAll("script,iframe,object,embed").forEach(n=>n.remove());parsed.querySelectorAll("*").forEach(n=>[...n.attributes].forEach(a=>{if(a.name.startsWith("on"))n.removeAttribute(a.name);}));main.innerHTML=parsed.body.innerHTML;}selected=null;alert("Тема импортирована.");}catch(e){alert("Файл темы повреждён или имеет неверный формат.");}file.value="";});body.append(field("Импортировать JSON",file));
+  body.append(make("h3",{},"Перенос дизайна"),make("p",{class:"f41-note"},"Сохраняет настройки FORMA и пользовательский CSS. Содержимое страницы остаётся нетронутым при импорте."));
+  body.append(btn("↓ Экспортировать тему JSON",()=>{const data={version:"4.1",settings:window.FORMA?.getSettings?.()||null,customCss:cssText};download(JSON.stringify(data,null,2),"forma-theme-4.1.json","application/json");},"f41-primary"));
+  const file=input("file","");file.accept=".json,application/json";file.addEventListener("change",async()=>{if(!file.files[0])return;try{const d=JSON.parse(await file.files[0].text());if(!confirm("Импорт заменит содержимое основной страницы. Продолжить?"))return;const old=cssText,next=typeof d.customCss==="string"?d.customCss:old;record(()=>{cssText=old;applyCSS();},()=>{cssText=next;applyCSS();});if(d.settings&&window.FORMA?.setSettings)window.FORMA.setSettings(d.settings);cssText=next;applyCSS();selected=null;alert("Тема импортирована. Разметка страницы не затрагивалась.");}catch(e){alert("Файл темы повреждён или имеет неверный формат.");}file.value="";});body.append(field("Импортировать JSON",file));
  }
  syncHistory();
 }
@@ -117,7 +115,7 @@ function addSection(type){
  };
  const t=templates[type];if(!t)return;remember();
  const section=make("section",{class:"forma-section forma-card f41-generated"});section.style.cssText="padding:clamp(28px,5vw,64px);margin:28px 0;text-align:center;border-radius:var(--forma-radius,22px);";
- const h=make("h2",{},t[0]),p=make("p",{},t[1]),b=make("a",{href:"#contact",class:"btn btn-primary"},t[2]);section.append(h,p,b);main.append(section);section.scrollIntoView({behavior:"smooth",block:"center"});
+ const h=make("h2",{},t[0]),p=make("p",{},t[1]),b=make("a",{href:"#contact",class:"btn btn-primary"},t[2]);section.append(h,p,b);main.append(section);record(()=>section.remove(),()=>main.append(section));section.scrollIntoView({behavior:"smooth",block:"center"});
 }
 window.FORMAStudio={open,close,undo,redo};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",build,{once:true});else build();
